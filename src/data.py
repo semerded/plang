@@ -1,0 +1,1 @@
+single_window_app: bool = True

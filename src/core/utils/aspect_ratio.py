@@ -13,9 +13,9 @@ def convert_aspect_ratio(aspect_ratio: str) -> float:
     aspect_width, aspect_height = aspect_ratio.split(":")
     
     if not aspect_width.isdigit() or int(aspect_width) < 1:
-        raise exceptions.NegativeAspectRatioError("first value of aspect ratio must be a positive int ( > 0) -> width:height")
+        raise exceptions.NegativeScreenUnitError("first value of aspect ratio must be a positive int ( > 0) -> width:height")
     
     if not aspect_height.isdigit() or int(aspect_height) < 1:
-        raise exceptions.NegativeAspectRatioError("second value of aspect ratio must be a positive int ( > 0) -> width:height")
+        raise exceptions.NegativeScreenUnitError("second value of aspect ratio must be a positive int ( > 0) -> width:height")
     
     return int(aspect_width) / int(aspect_height)

@@ -18,14 +18,14 @@ def test_convert_aspect_ratio():
         aspect_ratio.convert_aspect_ratio("1")
     with pytest.raises(exceptions.InvalidAspectRatioFormat):
         aspect_ratio.convert_aspect_ratio("nmb")
-    with pytest.raises(exceptions.NegativeAspectRatioError):
+    with pytest.raises(exceptions.NegativeScreenUnitError):
         aspect_ratio.convert_aspect_ratio("bub:1")
-    with pytest.raises(exceptions.NegativeAspectRatioError):
+    with pytest.raises(exceptions.NegativeScreenUnitError):
         aspect_ratio.convert_aspect_ratio("6:rub")
-    with pytest.raises(exceptions.NegativeAspectRatioError):
+    with pytest.raises(exceptions.NegativeScreenUnitError):
         aspect_ratio.convert_aspect_ratio("-1:6")
-    with pytest.raises(exceptions.NegativeAspectRatioError):
+    with pytest.raises(exceptions.NegativeScreenUnitError):
         aspect_ratio.convert_aspect_ratio("600:-2000")
-    with pytest.raises(exceptions.NegativeAspectRatioError):
+    with pytest.raises(exceptions.NegativeScreenUnitError):
         aspect_ratio.convert_aspect_ratio("0:0")
 

@@ -1,0 +1,45 @@
+.class {
+    color: blueviolet;
+}
+
+.variable {
+    color: crimson;
+
+}
+
+.function {
+    color: deepskyblue;
+}
+
+.method {
+    color: blue;
+}
+
+.documentation {
+    color: greenyellow;
+}
+
+.type {
+    color: yellow
+}
+
+.constructor {
+    color: darkgoldenrod;
+}
+
+.return {
+    color: aqua;
+}
+
+.constFalse {
+    background-color: red;
+}
+
+.constTrue {
+    background-color: green;
+}
+
+body {
+    background-color: #030303;
+    color: #9fa6b3;
+}

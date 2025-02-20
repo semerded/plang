@@ -1,0 +1,14 @@
+{
+    "path": "src",
+    "docPath": "docs",
+    "indent": {
+        "type": "space",
+        "size": 4
+    },
+    "altFiles": {
+        "exceptions": "exceptions.py",
+        "typedef": "typedef.py",
+        "version": "version.py",
+        "variables": "data.py"
+    }
+}

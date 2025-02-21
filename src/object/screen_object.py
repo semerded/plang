@@ -8,3 +8,4 @@ class ScreenObject:
         
     def _cycle(self):
         pass
+    

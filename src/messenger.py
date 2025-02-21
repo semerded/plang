@@ -12,14 +12,26 @@ class Messenger:
     
     @staticmethod
     def info(message: str):
+        """
+        send info to the terminal when in not in production mode
+        """
         print(message)
        
     @staticmethod 
     def warning(message: str):
+        """
+        send a yellow colored warning to stdout when in not in production mode\n
+        message will be send in yellow
+        """
         print(message)
         
     @staticmethod    
     def error(error: str | Exception, terminate: bool = False):
+        """
+        a non critical error\n
+        send a red colored error message to stdout when not in production mode\n
+        error can cause a termination when selected and not in debug mode
+        """
         if terminate and not data.debugging:
             if isinstance(error) == Exception:
                 raise error
@@ -27,8 +39,13 @@ class Messenger:
         print(error)
         
     @staticmethod   
-    def criticalError(error: Exception):
-        if not data.debugging:
+    def criticalError(error: Exception, terminate_in_debug_mode: bool = False):
+        """
+        a critcal error\n
+        send a purple colored error message to stdout when not in production mode\n
+        error will not terminate when in debug mode (can be overwritten with 'terminate_in_debug_mode')
+        """
+        if not data.debugging or terminate_in_debug_mode:
         # add log message
             raise error
         else: 
@@ -38,5 +55,9 @@ class Messenger:
             
     @staticmethod       
     def fatalError(error: Exception):
+        """
+        a fatal error (program will always terminate)
+        send a purple background error message to stdout when not in production mode
+        """
         # add log message
         raise error

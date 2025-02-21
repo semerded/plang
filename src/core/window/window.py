@@ -1,10 +1,10 @@
 import sdl2
 import sdl2.ext
-from ...typedef import screenUnit
+from ...typedef import screen_unit
 from ...core.window.event import Event
 from ...core.window.keyboard import Keyboard
 from ...core.window.mouse import Mouse
-from ...core.utils.screenunits import ScreenUnits
+from ...core.utils.screenunits import screen_units
 from ... import data
 import sys
 
@@ -12,10 +12,10 @@ class Window:
     """
     Create a window to draw on and take events from. Multiple windows can be created
     """
-    def __init__(self, width: screenUnit, height: screenUnit, show_on_creation: bool = True, title: str = data.default_window_name):
+    def __init__(self, width: screen_unit, height: screen_unit, show_on_creation: bool = True, title: str = data.default_window_name):
         self.title: str = title
-        self.width: screenUnit = width
-        self.height: screenUnit = height
+        self.width: screen_unit = width
+        self.height: screen_unit = height
         
         sdl2.ext.init()
         self._window = sdl2.ext.Window(self.title, size=(self.width, self.height))
@@ -27,7 +27,7 @@ class Window:
         self._event = Event()
         self.keyboard: Keyboard  = self._event.keyboard
         self.mouse: Mouse = self._event.mouse
-        self.sc: ScreenUnits = ScreenUnits(width, height)
+        self.sc: screen_units = screen_units(width, height)
         
         if show_on_creation:
             self._window.show()
@@ -74,7 +74,7 @@ class Window:
                 print("PLANG exited because there are 0 windows left")
             sys.exit(0) # using sys library to be able to compile to EXE
     
-    def resize(self, width: screenUnit, height: screenUnit):
+    def resize(self, width: screen_unit, height: screen_unit):
         self.width = width
         self.height = height
         self.sc.width = width

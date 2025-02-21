@@ -7,8 +7,8 @@ from ..core.utils import aspect_ratio as ar
 import pygame
 
 
-def setup(window_width: screenUnit | None = None,
-          window_height: screenUnit | None = None,
+def setup(window_width: screen_unit | None = None,
+          window_height: screen_unit | None = None,
           aspect_ratio: str | None = None,
           single_window_app: bool = True,
           window_name: str = data.default_window_name,

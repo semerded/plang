@@ -5,9 +5,9 @@ class Cord:
     
     """
     
-    def __init__(self, x: screenUnit, y: screenUnit) -> None:
-        self.x: screenUnit = x
-        self.y: screenUnit = y
+    def __init__(self, x: screen_unit, y: screen_unit) -> None:
+        self.x: screen_unit = x
+        self.y: screen_unit = y
         
     def equals(self, cord: Cord):
         return self.x == cord.x and self.y == cord.y

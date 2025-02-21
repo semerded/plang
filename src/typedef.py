@@ -10,8 +10,8 @@ uint8: TypeAlias = int  # 0 | 255
 int8: TypeAlias = int # - 128 | 127
 
 RGBvalue: TypeAlias = Annotated[tuple[uint8], 3]
-screenUnit: TypeAlias = int | float
-coordinate: TypeAlias = tuple[screenUnit, screenUnit]
+screen_unit: TypeAlias = int | float
+coordinate: TypeAlias = tuple[screen_unit, screen_unit]
 generic_var: TypeAlias = str | None
 
 fonts: TypeAlias = Literal[

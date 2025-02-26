@@ -10,6 +10,7 @@ uint8: TypeAlias = int  # 0 | 255
 int8: TypeAlias = int # - 128 | 127
 
 RGBvalue: TypeAlias = Annotated[tuple[uint8], 3]
+RGBAvalue: TypeAlias = Annotated[tuple[uint8], 4]
 screen_unit: TypeAlias = int | float
 coordinate: TypeAlias = tuple[screen_unit, screen_unit]
 generic_var: TypeAlias = str | None
@@ -22,5 +23,4 @@ fonts: TypeAlias = Literal[
 
 path: TypeAlias = str
 # globalFont: TypeAlias = pygame.font.Font
-functionAdress: TypeAlias = FunctionType
 g_id: TypeAlias = UUID

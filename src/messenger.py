@@ -1,5 +1,6 @@
 from .typedef import *
 from . import data
+from typing import NoReturn
 
 log_file_location: str = "" # TODO: set to a log dir
 
@@ -11,14 +12,14 @@ class Messenger:
     
     
     @staticmethod
-    def info(message: str):
+    def info(message: str) -> None:
         """
         send info to the terminal when in not in production mode
         """
         print(message)
        
     @staticmethod 
-    def warning(message: str):
+    def warning(message: str) -> None:
         """
         send a yellow colored warning to stdout when in not in production mode\n
         message will be send in yellow
@@ -26,7 +27,7 @@ class Messenger:
         print(message)
         
     @staticmethod    
-    def error(error: str | Exception, terminate: bool = False):
+    def error(error: str | Exception, terminate: bool = False) -> (NoReturn | None):
         """
         a non critical error\n
         send a red colored error message to stdout when not in production mode\n
@@ -39,7 +40,7 @@ class Messenger:
         print(error)
         
     @staticmethod   
-    def criticalError(error: Exception, terminate_in_debug_mode: bool = False):
+    def criticalError(error: Exception, terminate_in_debug_mode: bool = False) -> (NoReturn | None):
         """
         a critcal error\n
         send a purple colored error message to stdout when not in production mode\n
@@ -54,9 +55,9 @@ class Messenger:
             print(error)
             
     @staticmethod       
-    def fatalError(error: Exception):
+    def fatalError(error: Exception) -> NoReturn:
         """
-        a fatal error (program will always terminate)
+        a fatal error (program will always terminate)\n
         send a purple background error message to stdout when not in production mode
         """
         # add log message

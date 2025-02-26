@@ -21,3 +21,8 @@ class OutOfWindowBoundsError(Exception):
     """
     raises when an object/screenunit goes out of bound when it is not supposed to
     """
+    
+class ColorError(Exception):
+    """
+    raises when a color is not inputted correctly
+    """

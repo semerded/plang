@@ -1,6 +1,7 @@
 *.pyc
 test.py
 .vscode
+.venv
 /build
 /dist
 

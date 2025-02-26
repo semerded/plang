@@ -137,3 +137,8 @@ class yPos(Enum):
     center = 50
     bottom = 100
     
+class corner(Enum):
+    top_left = 0
+    top_right = 1
+    bottom_left = 2
+    bottom_right = 3

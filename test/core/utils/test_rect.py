@@ -1,5 +1,5 @@
 import pytest
-from src.core.utils.rect import Rect
+from src.core.window.rect import Rect
 
 def test_rect():
     rect = Rect(100, 200, 300, 400)
@@ -36,18 +36,18 @@ def test_ah(screen_unit, expected):
 
 def test_expand_shrink_width():
     rect = Rect(50, 50, 100, 50)
-    rect.expandWidth(20)
+    rect.expand_width(20)
     assert rect.w == 120 and rect.x == 40
 
-    rect.shrinkWidth(20)
+    rect.shrink_width(20)
     assert rect.w == 100 and rect.x == 50
 
 def test_expand_shrink_height():
     rect = Rect(50, 50, 100, 50)
-    rect.expandHeight(20)
+    rect.expand_height(20)
     assert rect.h == 70 and rect.y == 40
 
-    rect.shrinkHeight(20)
+    rect.shrink_height(20)
     assert rect.h == 50 and rect.y == 50
 
 def test_place_holder():

@@ -1,21 +1,26 @@
 import sdl2
 import sdl2.ext
-from ...typedef import screen_unit
+from ...typedef import screen_unit, RGBAvalue, RGBvalue
 from ...core.window.event import Event
 from ...core.window.keyboard import Keyboard
 from ...core.window.mouse import Mouse
 from ...core.utils.screenunits import screen_units
-from ... import data
+from ...core.window.draw import Draw
+from ... import data, Color
+from ...messenger import Messenger
 import sys
 
 class Window:
     """
     Create a window to draw on and take events from. Multiple windows can be created
     """
-    def __init__(self, width: screen_unit, height: screen_unit, show_on_creation: bool = True, title: str = data.default_window_name):
+    def __init__(self, width: screen_unit, height: screen_unit, fps: int = 60, show_on_creation: bool = True, title: str = data.default_window_name):
         self.title: str = title
         self.width: screen_unit = width
         self.height: screen_unit = height
+        if fps < -1 or fps == 0:
+            Messenger.fatalError(ValueError("fps can't be negative or 0 (-1 can be used for unlimited fps)"))
+        self._fps = fps
         
         sdl2.ext.init()
         self._window = sdl2.ext.Window(self.title, size=(self.width, self.height))
@@ -24,20 +29,32 @@ class Window:
             
         data.window_count += 1
             
-        self._event = Event()
+        self._event = Event(self._fps)
         self.keyboard: Keyboard  = self._event.keyboard
         self.mouse: Mouse = self._event.mouse
         self.sc: screen_units = screen_units(width, height)
-        
+        self.draw: Draw = Draw(self._renderer)
+
         if show_on_creation:
             self._window.show()
         
-    def event_handler(self) -> None:
+    def event_handler(self, background_color: (RGBvalue | RGBAvalue) = Color.BLACK, fps: int = None) -> None:
         """
-        Handle keyboard, mouse, clock and window events
+        Handle keyboard, mouse, clock and window events\n
+        Fps can be changed dynamically
         """
-        self._event.handle(self.close)
-                    
+        if fps == None:
+            fps = self._fps
+        elif fps < -1 or fps == 0:
+            Messenger.fatalError(ValueError("fps can't be negative or 0 (-1 can be used for unlimited fps)"))
+
+        sdl2.SDL_RenderPresent(self._renderer.sdlrenderer)   
+        sdl2.SDL_SetRenderDrawColor(self._renderer.sdlrenderer, *Color._handle_rgb_rgba(background_color))
+     
+        sdl2.SDL_RenderClear(self._renderer.sdlrenderer)
+        
+        self._event.handle(fps, self.close)
+                            
     def hide(self) -> None:
         """
         Hide the window

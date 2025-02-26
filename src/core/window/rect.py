@@ -1,6 +1,6 @@
 from typing import Annotated
 from ...typedef import *
-from ...core.utils.coordinate import Coordinate
+from ..utils.coordinate import Coordinate
 
 
 
@@ -16,7 +16,7 @@ class Rect():
         Coordinate.check_input(center)
         return cls(center[0] - radius, center[1] - radius, radius * 2, radius * 2)
     
-    @classmethod
+    @classmethod    
     def from_polygon(cls, points: tuple[coordinate] | list[coordinate]) -> "Rect":
         if not points:
             raise ValueError("Points list cannot be empty")
@@ -29,10 +29,17 @@ class Rect():
         max_y = max(p[1] for p in points)
 
         return cls(min_x, min_y, max_x - min_x, max_y - min_y)
+    
+    def pack(self) -> 'Rect':
+        """
+        returns a new rect instance from a rect instance
+        """
+        return Rect(self.x, self.y, self.w, self.h)
+        
 
     def unpack(self) -> Annotated[tuple[int], 4]:
         """
-        unpacks a rect into a tuple (x, y, w, h)
+        unpacks a rect instance into a tuple (x, y, w, h)
         """
         return self.x, self.y, self.w, self.h
 
@@ -80,19 +87,27 @@ class Rect():
         """
         return self.rh(screen_unit) + self.h
     
-    def expandWidth(self, expansion: int) -> None:
+    def expand_width(self, expansion: int) -> None:
         self.w += expansion
         self.x -= int(expansion / 2)
         
-    def shrinkWidth(self, shrinkage: int) -> None:
-        self.expandWidth(-shrinkage)
+    def shrink_width(self, shrinkage: int) -> None:
+        self.expand_width(-shrinkage)
         
-    def expandHeight(self, expansion: int) -> None:
+    def expand_height(self, expansion: int) -> None:
         self.h += expansion
         self.y -= int(expansion / 2)
         
-    def shrinkHeight(self, shrinkage: int) -> None:
-        self.expandHeight(-shrinkage)
+    def shrink_height(self, shrinkage: int) -> None:
+        self.expand_height(-shrinkage)
+        
+    def resize(self, width: screen_unit, height: screen_unit):
+        self.w = width
+        self.h = height
+        
+    def reposition(self, x: screen_unit, y: screen_unit):
+        self.x = x
+        self.y = y
 
     @staticmethod
     def place_holder() -> "Rect":

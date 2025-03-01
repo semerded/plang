@@ -24,7 +24,7 @@ class Window:
         
         sdl2.ext.init()
         self._window = sdl2.ext.Window(self.title, size=(self.width, self.height))
-        self._renderer = sdl2.ext.Renderer(self._window)
+        self._renderer = sdl2.ext.Renderer(self._window, flags=sdl2.SDL_RENDERER_ACCELERATED)
         
             
         data.window_count += 1
@@ -33,7 +33,7 @@ class Window:
         self.keyboard: Keyboard  = self._event.keyboard
         self.mouse: Mouse = self._event.mouse
         self.sc: screen_units = screen_units(width, height)
-        self.draw: Draw = Draw(self._renderer)
+        self.draw: Draw = Draw(self._window, self._renderer)
 
         if show_on_creation:
             self._window.show()
@@ -75,9 +75,6 @@ class Window:
         Repaint the full window with a specified color
         """
         self._renderer.clear(color)
-        
-    def update(self):
-        self._renderer.present()
 
     def close(self, quit_program: bool = False) -> None:
         """

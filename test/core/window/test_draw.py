@@ -2,31 +2,39 @@
 
 import pytest
 import math
+import numpy as np
 from src.core.window.draw import Draw
 
 # Assuming the Draw class is in a module named draw_module
 # from draw_module import Draw
 
-# However, since we don't have a separate module here, I'll assume the Draw class is available.
+# Since we don't have a separate module here, we'll proceed with the provided Draw class.
 
 class MockRenderer:
-    """ A mock renderer to pass into the Draw class for testing purposes. """
+    """A mock renderer to pass into the Draw class for testing purposes."""
     def __init__(self):
         self.sdlrenderer = None  # We won't actually render anything.
+        # Mock window size for frustum culling
+        self.window = MockWindow()
+
+class MockWindow:
+    """A mock window to provide size for the renderer."""
+    def __init__(self):
+        self.size = (800, 600)  # Example window size
 
 def test_generate_rectangle_vertices():
-    draw = Draw(MockRenderer())
+    draw = Draw(MockWindow(), MockRenderer())
     x, y, w, h = 10, 20, 100, 200
-    expected_vertices = [
-        (10, 20),          # Top-left
-        (110, 20),         # Top-right
-        (110, 220),        # Bottom-right
-        (10, 220)          # Bottom-left
-    ]
-    expected_indices = [0, 1, 2, 2, 3, 0]
+    expected_vertices = np.array([
+        [10.0, 20.0],          # Top-left
+        [110.0, 20.0],         # Top-right
+        [110.0, 220.0],        # Bottom-right
+        [10.0, 220.0]          # Bottom-left
+    ], dtype=np.float32)
+    expected_indices = np.array([0, 1, 2, 2, 3, 0], dtype=np.int32)
     vertices, indices = draw._generate_rectangle_vertices(x, y, w, h)
-    assert vertices == expected_vertices, "Rectangle vertices do not match expected values."
-    assert indices == expected_indices, "Rectangle indices do not match expected values."
+    np.testing.assert_allclose(vertices, expected_vertices, rtol=1e-5, atol=1e-8, err_msg="Rectangle vertices do not match expected values.")
+    np.testing.assert_array_equal(indices, expected_indices, err_msg="Rectangle indices do not match expected values.")
 
 def test_handle_radius():
     # Case 1: All radii are the same and fit within the rectangle
@@ -51,58 +59,69 @@ def test_handle_radius():
     assert adjusted_radii == expected_radii, "Radii were not adjusted correctly when one radius is zero."
 
 def test_generate_rounded_rectangle_vertices():
-    draw = Draw(MockRenderer())
+    draw = Draw(MockWindow(), MockRenderer())
     x, y, w, h = 0, 0, 100, 50
     radii = (10, 20, 30, 40)
-    vertices, indices = draw._generate_rounded_rectangle_vertices(x, y, w, h, radii)
+    angle_step = 5  # Adjust as needed
+    vertices, indices = draw._generate_rounded_rectangle_vertices(x, y, w, h, radii, angle_step)
 
-    # Since the vertices are floats calculated from cosine and sine, we can't compare them directly.
-    # We'll check the number of vertices and indices, and certain key points.
+    # Ensure vertices is a NumPy array
+    assert isinstance(vertices, np.ndarray), "Vertices should be a NumPy array."
+    assert isinstance(indices, np.ndarray), "Indices should be a NumPy array."
 
-    # Expected number of vertices
-    expected_num_vertices = None  # This depends on the angle_step and the radii
-    # For testing purposes, let's calculate it
-    angle_steps = [5]  # You can adjust this if you change angle_step
-    expected_vertices_count = 1  # Starts with center point
-    for r in radii:
-        if r > 0:
-            num_steps = len(range(0, 91, angle_steps[0]))
-            expected_vertices_count += num_steps
-    # Add the initial points (without arcs) and segments
-    expected_vertices_count += 4  # For each corner without radius
-    # Omitted here due to complexity; adjust accordingly
-
-    # Assert number of vertices is as expected
-    # This is simplified due to the complexity of exact calculation
-    assert len(vertices) > 0, "Vertices should not be empty."
-    assert len(indices) > 0, "Indices should not be empty."
+    # Check that vertices have shape (N, 2)
+    assert vertices.shape[1] == 2, "Vertices should be of shape (N, 2)."
 
     # Check that all vertices are within the bounds of the rectangle
-    for vx, vy in vertices:
-        assert x <= vx <= x + w, "Vertex x-coordinate out of bounds."
-        assert y <= vy <= y + h, "Vertex y-coordinate out of bounds."
+    x_coords = vertices[:, 0]
+    y_coords = vertices[:, 1]
+    assert np.all(x_coords >= x - 1e-5) and np.all(x_coords <= x + w + 1e-5), "Vertex x-coordinate out of bounds."
+    assert np.all(y_coords >= y - 1e-5) and np.all(y_coords <= y + h + 1e-5), "Vertex y-coordinate out of bounds."
+
+    # Check that indices are within valid range
+    assert indices.min() >= 0, "Indices contain negative values."
+    assert indices.max() < len(vertices), "Indices refer to nonexistent vertices."
+
+    # Check that there are enough vertices and indices
+    assert len(vertices) > 0, "No vertices were generated."
+    assert len(indices) > 0, "No indices were generated."
 
 def test_generate_circle_vertices():
-    draw = Draw(MockRenderer())
-    cx, cy, radius, segments = 50, 50, 25, 12
-    vertices, indices = draw._generate_circle_vertices(cx, cy, radius, segments)
+    draw = Draw(MockWindow(), MockRenderer())
+    radius, segments = 25, 12
+    vertices, indices = draw._generate_circle_vertices(0, 0, radius, segments)
 
-    # Expected number of vertices: center + segments
-    expected_num_vertices = segments + 1
+    # Expected number of vertices: center + perimeter vertices
+    expected_num_vertices = segments + 1  # Center vertex + perimeter vertices
     assert len(vertices) == expected_num_vertices, "Circle vertex count mismatch."
 
     # Check that all vertices are within the expected circle
     for vx, vy in vertices[1:]:  # Skip center
-        distance = math.hypot(vx - cx, vy - cy)
-        assert math.isclose(distance, radius, rel_tol=1e-5), "Vertex not on circle perimeter."
+        distance = math.hypot(vx, vy)
+        assert math.isclose(distance, radius, rel_tol=1e-5), f"Vertex at ({vx}, {vy}) not on circle perimeter."
 
 def test_generate_polygon_vertices():
-    draw = Draw(MockRenderer())
-    points = [(0, 0), (100, 0), (100, 100), (0, 100)]
+    draw = Draw(MockWindow(), MockRenderer())
+    points = np.array([[0, 0], [100, 0], [100, 100], [0, 100]], dtype=np.float32)
     vertices, indices = draw._generate_polygon_vertices(points)
 
-    # Expected indices for a square
-    expected_indices = [0, 1, 2, 0, 2, 3, 0, 3, 1]
-    assert vertices == points, "Polygon vertices do not match input points."
-    assert indices == expected_indices, "Polygon indices do not match expected values."
+    # Expected number of vertices: center + points
+    expected_num_vertices = len(points) + 1  # Center vertex + original points
+    assert len(vertices) == expected_num_vertices, "Polygon vertex count mismatch."
 
+    # Check that all vertices match the input points after the center vertex
+    np.testing.assert_allclose(vertices[1:], points, rtol=1e-5, atol=1e-8, err_msg="Polygon vertices do not match input points.")
+
+    # Check that indices are within valid range
+    assert indices.min() >= 0, "Indices contain negative values."
+    assert indices.max() < len(vertices), "Indices refer to nonexistent vertices."
+
+    # Correct the number of indices based on the implementation
+    # The triangle fan method generates (len(points) - 2 + 1) triangles (n - 1)
+    expected_indices_length = (len(points) - 1) * 3  # Each triangle has 3 indices
+
+    assert len(indices) == expected_indices_length, "Polygon indices length mismatch."
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

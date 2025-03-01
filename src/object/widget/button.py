@@ -1,10 +1,14 @@
+from time import perf_counter
+from typing import TYPE_CHECKING, Union, Annotated, Any
 from ...object.screen_object import ScreenObject
 from ...enum import mouse_button
-from time import perf_counter
-from ...typedef import RGBAvalue, RGBvalue, screen_unit
+from ...typedef import RGBAvalue, RGBvalue, screen_unit, percent
 from ...core.window.window import Window
 from ...color import Color
-from ...core.window.draw import Draw
+from ...enum import xPos, yPos
+from ...object.text import Text
+from ...core.utils.font import Font
+from ...annotated_var import unchanged
 
 class Button(ScreenObject):
     def __init__(self, window: Window, x: screen_unit, y: screen_unit, width: screen_unit, height: screen_unit, color: RGBvalue | RGBAvalue = Color.WHITE, radius: int = 0):
@@ -16,9 +20,16 @@ class Button(ScreenObject):
         self._click_time = 0
         self._double_click_timer = 0
         self._double_click_interval = 0.5 # default on windows os
+        self._text_position = (50, 50)
         
-    def set_text(self):
-        raise NotImplementedError
+    def set_text(self, text: Any, font: Font, color: Union[RGBvalue, RGBAvalue] = Color.WHITE, position: Union[tuple[xPos, yPos], tuple[Annotated[percent, 2]]] = unchanged) -> None:
+        self.text = Text(self.window, text, font, color)
+        if position != None:
+            self.set_text_position(position)
+            
+    def set_text_position(self, position:  Union[tuple[xPos, yPos], tuple[Annotated[percent, 2]]]) -> None:
+        if self._text_position != position:
+            self._text_position = position
     
     def set_icon(self):
         raise NotImplementedError
@@ -54,4 +65,7 @@ class Button(ScreenObject):
     
     def draw(self):
         self.window.draw.rectangle(*self.unpack(), self._color, self._radius)
+        
+        if self.text != None:
+            self.text.draw_in_rect(self.pack(), *self._text_position)
             

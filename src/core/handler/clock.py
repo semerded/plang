@@ -1,47 +1,49 @@
 from time import perf_counter, sleep
-from src import data  # Ensure you have the appropriate debugging flag
 
 class Clock:
     """
-    A clock set to a specific FPS with frame delay detection.
+    An efficient clock to maintain a target FPS with precise frame delay detection.
     """
 
-    def __init__(self, fps: int = 60, frame_delay_threshold_ms: float = 0.02):
-        self.fps: int = fps
-        self.frame_length: float = 1 / fps  # Duration of one frame in seconds
-        self._start = perf_counter()
-        self._last_tick = 0
-        self._delay_threshold = frame_delay_threshold_ms  # Delay threshold in seconds
-        self._frame_time = self._start  # Keep track of frame time
-    
-    @property
-    def tick(self) -> int:
-        """Calculate the current tick based on elapsed time and FPS"""
-        return int((perf_counter() - self._start) / self.frame_length)
+    def __init__(self, fps: int = 60, frame_delay_threshold_multiplier: float = 1.44):
+        self.fps = fps
+        self.frame_length = 1.0 / fps  # Duration of one frame in seconds
+        self._start_time = perf_counter()
+        self._next_frame_time = self._start_time + self.frame_length
+        self.frame_delay_threshold_multiplier = frame_delay_threshold_multiplier
+        self._frame_delay_threshold = self.frame_length * self.frame_delay_threshold_multiplier
+        print(self._frame_delay_threshold)
 
     def sleep(self, fps=None) -> None:
-        """Sleep until the next frame. Optionally, adjust FPS dynamically."""
+        """Sleep until the next frame. Optionally adjust FPS dynamically."""
         if fps and fps != self.fps:
+            # Update FPS and related calculations
             self.fps = fps
-            self.frame_length = 1 / fps
+            self.frame_length = 1.0 / fps
+            self._frame_delay_threshold = self.frame_length * self.frame_delay_threshold_multiplier
+            # Reset the frame schedule to prevent drift
+            current_time = perf_counter()
+            self._next_frame_time = current_time + self.frame_length
 
-        # Calculate target time for the next frame
-        target_time = self._frame_time + self.frame_length
-        sleep_time = target_time - perf_counter()
+        current_time = perf_counter()
+        sleep_time = self._next_frame_time - current_time
 
-        # Only sleep if we have time before the next frame
         if sleep_time > 0:
             sleep(sleep_time)
+            current_time = self._next_frame_time
+        else:
+            # We're behind schedule; adjust the next frame time
+            current_time = perf_counter()
 
-        # Measure the actual frame delay
-        if self._last_tick != 0 and target_time - self._last_tick > self._delay_threshold and data.debugging:
-            self._frame_delay(target_time - self._last_tick)
+        # Check for frame delays
+        delay = current_time - self._next_frame_time
+        if delay > self._frame_delay_threshold:
+            self._frame_delay(delay)
 
-        # Update the last tick and the frame time
-        self._last_tick = self._frame_time
-        self._frame_time = perf_counter()  # Reset frame time for next iteration
+        # Schedule the next frame
+        self._next_frame_time = current_time + self.frame_length
 
     def _frame_delay(self, delay_time):
-        """Triggered when the frame is delayed beyond the specified threshold"""
+        """Handle significant frame delays."""
         print(f"Frame delayed by {delay_time:.5f} seconds")
 

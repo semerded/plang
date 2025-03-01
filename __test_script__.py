@@ -5,7 +5,9 @@ import sdl2
 pl.enable_debugging()
 
 window = pl.Window(800, 600, fps=-1)
-button = pl.Button(window, 50, 50, 200, 50, pl.Color.BEIGE, 8)
+button = pl.Button(window, 50, 50, 200, 50, pl.Color.RED, 8)
+button.set_text("hi", pl.Font(pl.fonts.ARIAL, 14))
+button2 = pl.Button(window, 300, 50, 400, 50, pl.Color.BEIGE, 32)
 fps_counter = pl.FPScounterWidget(window, pl.corner.top_right)
 
 
@@ -21,9 +23,12 @@ while True:
     if button.is_double_clicked():
         print(True)
         
+        
     
     # window.draw.line(200, 30, 300, 50, pl.Color.AQUAMARINE)
-    button.draw()
+    for i in range(12):
+        button.draw()
+        button2.draw()
     # print(window.sc.vw(100), window.sc.vh(100))
     
 

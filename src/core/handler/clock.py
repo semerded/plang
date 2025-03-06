@@ -12,7 +12,6 @@ class Clock:
         self._next_frame_time = self._start_time + self.frame_length
         self.frame_delay_threshold_multiplier = frame_delay_threshold_multiplier
         self._frame_delay_threshold = self.frame_length * self.frame_delay_threshold_multiplier
-        print(self._frame_delay_threshold)
 
     def sleep(self, fps=None) -> None:
         """Sleep until the next frame. Optionally adjust FPS dynamically."""

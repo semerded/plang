@@ -34,6 +34,7 @@ class Window:
         self.mouse: Mouse = self._event.mouse
         self.sc: screen_units = screen_units(width, height)
         self.draw: Draw = Draw(self._window, self._renderer)
+        self.frame_counter = 0
 
         if show_on_creation:
             self._window.show()
@@ -47,6 +48,7 @@ class Window:
             fps = self._fps
         elif fps < -1 or fps == 0:
             Messenger.fatalError(ValueError("fps can't be negative or 0 (-1 can be used for unlimited fps)"))
+        self.frame_counter += 1
 
         sdl2.SDL_RenderPresent(self._renderer.sdlrenderer)   
         sdl2.SDL_SetRenderDrawColor(self._renderer.sdlrenderer, *Color._handle_rgb_rgba(background_color))

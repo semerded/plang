@@ -4,11 +4,8 @@ from sdl2 import SDL_GetNumVideoDisplays, SDL_Init, SDL_Quit, SDL_GetDisplayBoun
 from .. import data, exceptions
 from ..core.utils.font import Font
 
-class AvailableFonts: ...
-
 def _backend_init():
-    global AvailableFonts
-    print("welcome to Pla&g")
+    print("welcome to Plang!")
 
     SDL_Init(SDL_INIT_VIDEO)
     SDL_SetHint(SDL_HINT_RENDER_DRIVER, b"direct3d11")

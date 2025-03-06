@@ -9,6 +9,7 @@ from ...enum import xPos, yPos
 from ...object.text import Text
 from ...core.utils.font import Font
 from ...annotated_var import unchanged
+from ...messenger import Messenger
 
 class Button(ScreenObject):
     def __init__(self, window: Window, x: screen_unit, y: screen_unit, width: screen_unit, height: screen_unit, color: RGBvalue | RGBAvalue = Color.WHITE, radius: int = 0):
@@ -28,8 +29,21 @@ class Button(ScreenObject):
             self.set_text_position(position)
             
     def set_text_position(self, position:  Union[tuple[xPos, yPos], tuple[Annotated[percent, 2]]]) -> None:
-        if self._text_position != position:
-            self._text_position = position
+        if isinstance(position[0], xPos):
+            x = position[0].value
+        elif isinstance(position[0], (int, float)):
+            x = position[0]
+        else:
+            Messenger.fatalError(TypeError(f"value '{position[0]}' with type '{type(position[0])}' is not a valid screen-unit for a text's x position"))
+        
+        if isinstance(position[1], xPos):
+            y = position[1].value
+        elif isinstance(position[1], (int, float)):
+            y = position[1]
+        else:
+            Messenger.fatalError(TypeError(f"value '{position[1]}' with type '{type(position[1])}' is not a valid screen-unit for a text's y position"))
+        if self._text_position != (x, y):
+            self._text_position = (x, y)
     
     def set_icon(self):
         raise NotImplementedError

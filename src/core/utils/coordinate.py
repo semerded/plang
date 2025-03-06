@@ -13,7 +13,7 @@ class Coordinate:
         
     
     @staticmethod
-    def check_input(input: 'Coordinate', strict_positive: bool = False, strict_in_window_bounds: bool = False, window: Optional['Window'] = None):
+    def check_input(input: 'Coordinate', strict_positive: bool = False, strict_in_window_bounds: bool = False, window: Optional['Window'] = None) -> 'Coordinate':
         if len(input) == 2:
             if strict_positive:
                 if input[0] < 0:
@@ -34,6 +34,7 @@ class Coordinate:
                 Messenger.fatalError(ExpectedLengthError(f"Coordinate length of [2] is not met: actual length = {len(input)}"))
             else:
                 Messenger.fatalError(ExpectedLengthError(f"Coordinate length of [2] exceeded: actual length = {len(input)}"))
+        return input
     
     def equals(self, cord: 'Coordinate'):
         return self.x == cord.x and self.y == cord.y

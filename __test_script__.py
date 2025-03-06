@@ -28,6 +28,7 @@ while True:
         
     
     window.draw.line(200, 30, 300, 50, pl.Color.AQUAMARINE)
+    window.draw.triangle_with_border((900, 500), (800, 540 ), (750, 600), 4,  pl.Color.YELLOW, pl.Color.BLUE)
     button.draw()
     # button2.draw()
     # print(window.sc.vw(100), window.sc.vh(100))

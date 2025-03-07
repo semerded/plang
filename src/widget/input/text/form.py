@@ -1,7 +1,7 @@
-from ...core.window.window import Window
-from ..screen_object import ScreenObject
+from ....core.window.window import Window
+from ...core.widget import ScreenObject
 import sdl2.ext
-from ...enum import key
+from ....enum import key
 from typing import Callable
 
 class Form(ScreenObject): 

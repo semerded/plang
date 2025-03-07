@@ -1,5 +1,6 @@
 import sdl2
 import sdl2.ext
+from typing import Any, Callable, TYPE_CHECKING
 from ...typedef import screen_unit, RGBAvalue, RGBvalue
 from ...core.window.event import Event
 from ...core.window.keyboard import Keyboard
@@ -9,6 +10,10 @@ from ...core.window.draw import Draw
 from ... import data, Color
 from ...messenger import Messenger
 import sys
+
+if TYPE_CHECKING:
+    from ...widget.core.widget import Widget
+    from ...core.handler.OID import OID
 
 class Window:
     """
@@ -35,6 +40,8 @@ class Window:
         self.sc: screen_units = screen_units(width, height)
         self.draw: Draw = Draw(self._window, self._renderer)
         self.frame_counter = 0
+        self.shared_data: dict[str, Any] = {}
+        self._widgets: dict[str, Widget] = {}
 
         if show_on_creation:
             self._window.show()
@@ -55,7 +62,13 @@ class Window:
      
         sdl2.SDL_RenderClear(self._renderer.sdlrenderer)
         
-        self._event.handle(fps, self.close)
+        if not self.is_init_frame():
+            self._event.handle(fps, self.close)
+            for widget in self._widgets.values():
+                widget._cycle()        
+    
+
+      
                             
     def hide(self) -> None:
         """
@@ -96,3 +109,8 @@ class Window:
         self.sc.width = width
         self.sc.height = height
         self.update()
+        
+    
+    # frame indentifiers
+    def is_init_frame(self) -> bool:
+        return self.frame_counter <= 1

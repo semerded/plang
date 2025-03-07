@@ -3,7 +3,7 @@
 from src.core.backend import _backend_init
 _backend_init()
 del _backend_init
-from src.enum import mouse_button, key, xPos, yPos, corner
+from src.enum import mouseButton, mouseCursor, key, xPos, yPos, corner
 from src.color import Color
 from src.version import get_version
 from src import exceptions, messenger, typedef
@@ -27,10 +27,17 @@ from src.core.window.window import Window
 from src.core.window.draw import Draw
 
 # widgets
-from src.object.text import Text
-from src.object.widget.button import Button
-from src.object.widget.text_box import TextBox
-from src.object.widget.debug.fps_counter_widget import FPScounterWidget
+#   core widgets
+from src.widget.core.widget import Widget, dispose
+from src.widget.core.text import Text
+#   input widgets
+from src.widget.input.button.button import Button
+from src.widget.input.button.radio_button import RadioButton
+from src.widget.input.button.checkbox import Checkbox
+#   static widgets
+from src.widget.static.text_box import TextBox
+#   debug widgets
+from src.widget.debug.fps_counter_widget import FPScounterWidget
 
 # cache
 from src.core.utils.cache.font_cache import fonts

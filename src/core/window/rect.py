@@ -34,7 +34,7 @@ class Rect():
         """
         returns a new rect instance from a rect instance
         """
-        return Rect(self.x, self.y, self.w, self.h)
+        return self
         
 
     def unpack(self) -> Annotated[tuple[int], 4]:

@@ -1,5 +1,6 @@
 from enum import Enum
 from sdl2 import (
+    # SDL keyboard keys
     SDLK_UNKNOWN, SDLK_RETURN, SDLK_ESCAPE, SDLK_BACKSPACE, SDLK_TAB, SDLK_SPACE,
     SDLK_EXCLAIM, SDLK_QUOTEDBL, SDLK_HASH, SDLK_PERCENT, SDLK_DOLLAR, SDLK_AMPERSAND,
     SDLK_QUOTE, SDLK_LEFTPAREN, SDLK_RIGHTPAREN, SDLK_ASTERISK, SDLK_PLUS, SDLK_COMMA,
@@ -11,10 +12,23 @@ from sdl2 import (
     SDLK_LCTRL, SDLK_LSHIFT, SDLK_LALT, SDLK_LGUI, SDLK_RCTRL, SDLK_RSHIFT, SDLK_RALT,
     SDLK_RGUI, SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_INSERT, SDLK_DELETE,
     SDLK_HOME, SDLK_END, SDLK_PAGEUP, SDLK_PAGEDOWN, SDLK_F1, SDLK_F2, SDLK_F3, SDLK_F4,
-    SDLK_F5, SDLK_F6, SDLK_F7, SDLK_F8, SDLK_F9, SDLK_F10, SDLK_F11, SDLK_F12
+    SDLK_F5, SDLK_F6, SDLK_F7, SDLK_F8, SDLK_F9, SDLK_F10, SDLK_F11, SDLK_F12,
+    # SDL mouse cursors
+    SDL_SYSTEM_CURSOR_ARROW,
+    SDL_SYSTEM_CURSOR_IBEAM,
+    SDL_SYSTEM_CURSOR_WAIT,
+    SDL_SYSTEM_CURSOR_CROSSHAIR,
+    SDL_SYSTEM_CURSOR_HAND,
+    SDL_SYSTEM_CURSOR_NO,
+    SDL_SYSTEM_CURSOR_SIZEALL,
+    SDL_SYSTEM_CURSOR_SIZENESW,
+    SDL_SYSTEM_CURSOR_SIZENS,
+    SDL_SYSTEM_CURSOR_SIZENWSE,
+    SDL_SYSTEM_CURSOR_SIZEWE
 )
 
-class mouse_button(Enum):
+
+class mouseButton(Enum):
     left = 1
     middle = 2
     right = 3
@@ -22,7 +36,7 @@ class mouse_button(Enum):
     scroll_down = 5
     bottom_side = 6
     top_side = 7
-    
+
 
 class key(Enum):
     UNKNOWN = SDLK_UNKNOWN
@@ -46,7 +60,7 @@ class key(Enum):
     MINUS = SDLK_MINUS
     PERIOD = SDLK_PERIOD
     SLASH = SDLK_SLASH
-    
+
     NUM_0 = SDLK_0
     NUM_1 = SDLK_1
     NUM_2 = SDLK_2
@@ -57,7 +71,7 @@ class key(Enum):
     NUM_7 = SDLK_7
     NUM_8 = SDLK_8
     NUM_9 = SDLK_9
-    
+
     COLON = SDLK_COLON
     SEMICOLON = SDLK_SEMICOLON
     LESS = SDLK_LESS
@@ -65,7 +79,7 @@ class key(Enum):
     GREATER = SDLK_GREATER
     QUESTION = SDLK_QUESTION
     AT = SDLK_AT
-    
+
     A = SDLK_a
     B = SDLK_b
     C = SDLK_c
@@ -92,7 +106,7 @@ class key(Enum):
     X = SDLK_x
     Y = SDLK_y
     Z = SDLK_z
-    
+
     LCTRL = SDLK_LCTRL
     LSHIFT = SDLK_LSHIFT
     LALT = SDLK_LALT
@@ -101,19 +115,19 @@ class key(Enum):
     RSHIFT = SDLK_RSHIFT
     RALT = SDLK_RALT
     RGUI = SDLK_RGUI
-    
+
     UP = SDLK_UP
     DOWN = SDLK_DOWN
     LEFT = SDLK_LEFT
     RIGHT = SDLK_RIGHT
-    
+
     INSERT = SDLK_INSERT
     DELETE = SDLK_DELETE
     HOME = SDLK_HOME
     END = SDLK_END
     PAGEUP = SDLK_PAGEUP
     PAGEDOWN = SDLK_PAGEDOWN
-    
+
     F1 = SDLK_F1
     F2 = SDLK_F2
     F3 = SDLK_F3
@@ -127,16 +141,31 @@ class key(Enum):
     F11 = SDLK_F11
     F12 = SDLK_F12
 
+class mouseCursor(Enum):
+    ARROW = SDL_SYSTEM_CURSOR_ARROW
+    IBEAM = SDL_SYSTEM_CURSOR_IBEAM
+    WAIT = SDL_SYSTEM_CURSOR_WAIT
+    CROSSHAIR = SDL_SYSTEM_CURSOR_CROSSHAIR
+    HAND = SDL_SYSTEM_CURSOR_HAND
+    NO = SDL_SYSTEM_CURSOR_NO
+    SIZEALL = SDL_SYSTEM_CURSOR_SIZEALL
+    SIZENESW = SDL_SYSTEM_CURSOR_SIZENESW
+    SIZENS = SDL_SYSTEM_CURSOR_SIZENS
+    SIZENWSE = SDL_SYSTEM_CURSOR_SIZENWSE
+    SIZEWE = SDL_SYSTEM_CURSOR_SIZEWE
+
 class xPos(Enum):
     left = 0
     center = 50
     right = 100
-    
+
+
 class yPos(Enum):
     top = 0
     center = 50
     bottom = 100
-    
+
+
 class corner(Enum):
     top_left = 0
     top_right = 1

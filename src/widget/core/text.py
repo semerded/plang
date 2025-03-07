@@ -1,13 +1,13 @@
 import sdl2
 import sdl2.sdlttf as sdlttf
 from typing import TYPE_CHECKING
-from ..core.utils.font import Font
-from ..color import Color
-from ..typedef import screen_unit
-from ..core.window.rect import Rect
+from ...core.utils.font import Font
+from ...color import Color
+from ...typedef import screen_unit
+from ...core.window.rect import Rect
 
 if TYPE_CHECKING:
-    from ..core.window.window import Window
+    from ...core.window.window import Window
 
 
 class Text:

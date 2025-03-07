@@ -1,17 +1,17 @@
 from typing import Union, TYPE_CHECKING
 
-from ....typedef import screen_unit, RGBAvalue, RGBvalue
-from ....core.handler.fps_counter import FPSCounter
-from ....object.text import Text
-from ....enum import corner
-from ....core.utils.font import Font
-from ....core.utils.cache.font_cache import fonts
-from ....color import Color
-from ....messenger import Messenger
-from ....core.utils.coordinate import Coordinate
+from ...typedef import screen_unit, RGBAvalue, RGBvalue
+from ...core.handler.fps_counter import FPSCounter
+from ...widget.core.text import Text
+from ...enum import corner
+from ...core.utils.font import Font
+from ...core.utils.cache.font_cache import fonts
+from ...color import Color
+from ...messenger import Messenger
+from ...core.utils.coordinate import Coordinate
 
 if TYPE_CHECKING:
-    from ....core.window.window import Window
+    from ...core.window.window import Window
 
 
 class FPScounterWidget:

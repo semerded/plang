@@ -1,7 +1,7 @@
 from ..handler.OID import OID
 from .rect import Rect
 from ...typedef import *
-from ...enum import mouse_button
+from ...enum import mouseButton
 from ... import data
 from typing import TYPE_CHECKING
 
@@ -19,7 +19,7 @@ class InteractiveRect(Rect):
         self.oid: OID = OID()
         self.window: 'Window' = window
         self._is_clicked_in_rect = False
-        self._enabled = True
+        self._enabled = True        
 
     def _cycle(self):
         if self.is_clicked():
@@ -27,17 +27,20 @@ class InteractiveRect(Rect):
         
         if self.window.mouse.is_mouse_released():
             self._is_clicked_in_rect = False
+            
+    def __del__(self):
+        self.window._widgets.pop(self.oid())
 
     def is_mouse_over(self) -> bool:
         return self.window.mouse.is_mouse_over(self.pack())
 
-    def is_clicked(self, mouse_button: mouse_button = mouse_button.left, overwrite_widget_already_pressed: bool = False, overwrite_deactivated: bool = False) -> bool:
+    def is_clicked(self, mouse_button: mouseButton = mouseButton.left, overwrite_widget_already_pressed: bool = False, overwrite_deactivated: bool = False) -> bool:
         return self._eligible_for_click(overwrite_widget_already_pressed, overwrite_deactivated) and self.window.mouse.is_mouse_clicked_in_rect(self.pack(), mouse_button)
 
-    def is_released(self, mouse_button: mouse_button = mouse_button.left, overwrite_widget_already_pressed: bool = False, overwrite_deactivated: bool = False) -> bool:
+    def is_released(self, mouse_button: mouseButton = mouseButton.left, overwrite_widget_already_pressed: bool = False, overwrite_deactivated: bool = False) -> bool:
         return self._eligible_for_click(overwrite_widget_already_pressed, overwrite_deactivated) and self.window.mouse.is_mouse_released_in_rect(self.pack(), mouse_button)
 
-    def is_pressing(self, mouse_button: mouse_button = mouse_button.left, overwrite_widget_already_pressed: bool = False, overwrite_deactivated: bool = False) -> bool:
+    def is_pressing(self, mouse_button: mouseButton = mouseButton.left, overwrite_widget_already_pressed: bool = False, overwrite_deactivated: bool = False) -> bool:
         return self._eligible_for_click(overwrite_widget_already_pressed, overwrite_deactivated) and self.window.mouse.is_mouse_pressing_in_rect(self.pack(), mouse_button) and self._is_clicked_in_rect
 
     def _eligible_for_click(self, overwrite_widget_already_pressed, overwrite_deactivated):
@@ -57,7 +60,7 @@ class InteractiveRect(Rect):
         """
         returns a new rect instance from a rect instance
         """
-        return InteractiveRect(self.window, self.x, self.y, self.w, self.h)
+        return self
 
     def rect_collision(self, rect: Rect) -> bool:
         raise NotImplementedError

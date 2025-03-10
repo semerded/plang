@@ -1,11 +1,12 @@
 from ...enum import mouseButton, mouseCursor
-from ...typedef import coordinate, screen_unit
+from ...typedef import screen_unit
 from .rect import Rect
 from ...core.utils.coordinate import Coordinate
 from ...messenger import Messenger
 import sdl2
 from sdl2.ext import load_image
 from typing import Union, Annotated
+import math
 
 
 class Mouse:
@@ -52,19 +53,25 @@ class Mouse:
     def is_mouse_over(self, rect: Rect) -> bool:
         return rect.point_collision(*self.get_position())
     
-    def is_mouse_in_area(self, topCord: coordinate, bottomCord: coordinate) -> bool:
+    def is_mouse_in_area(self, topCord: Coordinate, bottomCord: Coordinate) -> bool:
         size = (abs(bottomCord[0] - topCord[0]), abs(bottomCord[1] - topCord[1]))
         rect = Rect(*topCord, *size)
         return self.is_mouse_over(rect)
     
-    def is_mouse_in_polygon(self, polygon: Union[list, tuple [coordinate]]) -> bool:
+    def is_mouse_in_polygon(self, polygon: Union[list, tuple [Coordinate]]) -> bool:
         raise NotImplementedError
     
-    def is_mouse_in_circle(self, center: coordinate, radius: int) -> bool:
+    def is_mouse_in_circle(self, center: Coordinate, radius: int) -> bool:
         if not isinstance(center, Coordinate):
             center = Coordinate(*center)
-            
-        return center.difference() < radius
+        dx, dy = center.difference(self.get_position())
+        return math.hypot(dx, dy) <= radius
+
+
+
+
+
+
 
     # click detection
     def is_mouse_clicked(self, mouse_button: mouseButton = mouseButton.left) -> bool:
@@ -76,7 +83,7 @@ class Mouse:
     def is_mouse_clicked_in_polygon(self, polygon: Union[list[Union[list, tuple]], tuple[Union[list, tuple]]], mouse_button: mouseButton = mouseButton.left) -> bool:
         return self.is_mouse_in_polygon(polygon) and self.is_mouse_clicked(mouse_button)
     
-    def is_mouse_clicked_in_circle(self, center: coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool:
+    def is_mouse_clicked_in_circle(self, center: Coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool:
         return self.is_mouse_in_circle(center, radius) and self.is_mouse_clicked(mouse_button)
         
     #? not variations
@@ -86,7 +93,7 @@ class Mouse:
     def is_mouse_clicked_outside_polygon(self, polygon: Union[list[Union[list, tuple]], tuple[Union[list, tuple]]], mouse_button: mouseButton = mouseButton.left) -> bool:
         return not self.is_mouse_in_polygon(polygon) and self.is_mouse_clicked(mouse_button)
     
-    def is_mouse_clicked_outside_circle(self, center: coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool:
+    def is_mouse_clicked_outside_circle(self, center: Coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool:
         return not self.is_mouse_in_circle(center, radius) and self.is_mouse_clicked(mouse_button)
 
     # release detection
@@ -99,7 +106,7 @@ class Mouse:
     def is_mouse_released_in_polygon(self, polygon: Union[list[Union[list, tuple]], tuple[Union[list, tuple]]], mouse_button: mouseButton = mouseButton.left) -> bool:
         return self.is_mouse_in_polygon(polygon) and self.is_mouse_released(mouse_button)
     
-    def is_mouse_released_in_circle(self, center: coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool: 
+    def is_mouse_released_in_circle(self, center: Coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool: 
         return self.is_mouse_in_circle(center, radius) and self.is_mouse_released(mouse_button)
     
     #? not variations
@@ -109,7 +116,7 @@ class Mouse:
     def is_mouse_released_outside_polygon(self, polygon: Union[list[Union[list, tuple]], tuple[Union[list, tuple]]], mouse_button: mouseButton = mouseButton.left) -> bool:
         return not self.is_mouse_in_polygon(polygon) and self.is_mouse_released(mouse_button)
     
-    def is_mouse_released_outside_circle(self, center: coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool: 
+    def is_mouse_released_outside_circle(self, center: Coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool: 
         return not self.is_mouse_in_circle(center, radius) and self.is_mouse_released(mouse_button)
 
     
@@ -123,7 +130,7 @@ class Mouse:
     def is_mouse_pressing_in_polygon(self, polygon: Union[list[Union[list, tuple]], tuple[Union[list, tuple]]], mouse_button: mouseButton = mouseButton.left) -> bool:
         return self.is_mouse_in_polygon(polygon) and self.is_mouse_pressing(mouse_button)
     
-    def is_mouse_pressing_in_circle(self, center: coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool:
+    def is_mouse_pressing_in_circle(self, center: Coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool:
         return self.is_mouse_in_circle(center, radius) and self.is_mouse_pressing(mouse_button)
     
     #? not variations
@@ -133,7 +140,7 @@ class Mouse:
     def is_mouse_pressing_outside_polygon(self, polygon: Union[list[Union[list, tuple]], tuple[Union[list, tuple]]], mouse_button: mouseButton = mouseButton.left) -> bool:
         return not self.is_mouse_in_polygon(polygon) and self.is_mouse_pressing(mouse_button)
     
-    def is_mouse_pressing_outside_circle(self, center: coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool:
+    def is_mouse_pressing_outside_circle(self, center: Coordinate, radius: int, mouse_button: mouseButton = mouseButton.left) -> bool:
         return not self.is_mouse_in_circle(center, radius) and self.is_mouse_pressing(mouse_button)
         
         

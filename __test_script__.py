@@ -13,14 +13,11 @@ radio1 = pl.RadioButton(window, "1", 100, 100, 20)
 radio2 = pl.RadioButton(window, "1", 200, 100, 20)
 radio3 = pl.RadioButton(window, "1", 300, 100, 20)
 
-for w in window._widgets.values():
-    print(w.id, w.x)
-    
-radio3.x = 600
+form = pl.Form(window, 100, 300, 200, 80)
+# text_widget = pl.Text(window, "hello world", pl.Font(pl.fonts.ARIAL, 22), pl.Color.BLACK)
 
 
-for w in window._widgets.values():
-    print(w.id, w.x)
+
 
 while True:
     window.event_handler()
@@ -37,7 +34,7 @@ while True:
         
     # if button.is_pressing():
     #     print(button.is_held_for(1))
-        
+    form.draw()
         
     # window.draw.polygon_with_border([(500, 300), (200, 300), (100, 100), (500, 100)], 20, pl.Color.GREEN, pl.Color.LESS_WHITE)
         

@@ -28,12 +28,13 @@ from src.core.window.draw import Draw
 
 # widgets
 #   core widgets
-from src.widget.core.widget import Widget, dispose
+from src.widget.core.widget import Widget
 from src.widget.core.text import Text
 #   input widgets
 from src.widget.input.button.button import Button
 from src.widget.input.button.radio_button import RadioButton
 from src.widget.input.button.checkbox import Checkbox
+from src.widget.input.text.form import Form
 #   static widgets
 from src.widget.static.text_box import TextBox
 #   debug widgets

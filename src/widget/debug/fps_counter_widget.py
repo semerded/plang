@@ -58,7 +58,7 @@ class FPScounterWidget:
 
     def draw(self) -> None:
         self._fps_counter.tick()
-        self._text.change_text(f"{round(self._fps_counter.get_fps(), 2)} FPS")
+        self._text.set_text(f"{round(self._fps_counter.get_fps(), 2)} FPS")
 
         if self._locked_corner_position:
             self._calculate_corner_position(self._position)

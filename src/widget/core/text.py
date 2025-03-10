@@ -1,6 +1,6 @@
 import sdl2
 import sdl2.sdlttf as sdlttf
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from ...core.utils.font import Font
 from ...color import Color
 from ...typedef import screen_unit
@@ -18,6 +18,8 @@ class Text:
         self.font_size = font.size
         self.color = sdl2.SDL_Color(*color)  # Convert to SDL_Color
         self.font = self._open_font(self.font_path, self.font_size)
+        self.leading = ""
+        self.trailing = ""
 
         # Internal variables
         self.position = (0, 0)
@@ -30,7 +32,7 @@ class Text:
 
         # Initialize texture and size
         self.texture, self.width, self.height = self._get_cached_texture(
-            self.text)
+            self.text, self.leading, self.trailing)
 
     def _open_font(self, path, size):
         if not isinstance(path, str):
@@ -40,18 +42,21 @@ class Text:
             raise RuntimeError(f"Failed to load font from path: {path}")
         return font
 
-    def _get_cached_texture(self, text):
+    def _get_cached_texture(self, text, leading, trailing) -> Union[tuple[sdl2.SDL_Texture, int, int], None]:
         """
         Retrieve the texture and size from the cache if available,
-        otherwise render and cache them.
+        otherwise render and cache them. 
         """
-        cache_key = (text, self.font_size, self.color.r, self.color.g, self.color.b, self.color.a)
+        cache_key = (text, self.font_size, self.color.r, self.color.g, self.color.b, self.color.a, leading, trailing)
         if cache_key in self.texture_cache:
             return self.texture_cache[cache_key]
         else:
             # Render the text to a surface
+            txt: str = leading + text + trailing
+            if not txt:
+                return None, 0, 0
             surface = sdlttf.TTF_RenderUTF8_Blended(
-                self.font, text.encode('utf-8'), self.color)
+                self.font, txt.encode('utf-8'), self.color)
             if not surface:
                 raise RuntimeError("Failed to render text surface")
             texture = sdl2.SDL_CreateTextureFromSurface(
@@ -66,11 +71,23 @@ class Text:
             self.texture_cache[cache_key] = (texture, w, h)
             return texture, w, h
 
-    def change_text(self, new_text):
+    def set_text(self, new_text):
         if new_text != self.text:
             self.text = str(new_text)
             self.texture, self.width, self.height = self._get_cached_texture(
-                self.text)
+                self.text, self.leading, self.trailing)
+            
+    def set_leading(self, new_leading):
+        if new_leading != self.leading:
+            self.leading = str(new_leading)
+            self.texture, self.width, self.height = self._get_cached_texture(
+                self.text, self.leading, self.trailing)
+            
+    def set_trailing(self, new_trailing):
+        if new_trailing != self.trailing:
+            self.trailing = str(new_trailing)
+            self.texture, self.width, self.height = self._get_cached_texture(
+                self.text, self.leading, self.trailing)
 
     def get_size(self):
         cache_key = (self.text, self.font_size)
@@ -90,7 +107,7 @@ class Text:
     def set_position(self, x: screen_unit, y: screen_unit):
         self.position = (x, y)
 
-    def draw(self):
+    def draw(self): # TODO fix this
         # Create a destination rect using your custom Rect class
         dest_rect = Rect(int(self.position[0]), int(
             self.position[1]), self.width, self.height)
@@ -111,70 +128,71 @@ class Text:
         """
         max_width = rect.w
         max_height = rect.h
-        text = self.text
+        text = self.leading + self.text + self.trailing # TODO only recalculate when changed
+        
+        if text:
+            # Create a cache key based on text content, font size, max dimensions, and alignment
+            cache_key = (text, self.font_size, max_width, max_height, align_percent_x,
+                        align_percent_y, self.color.r, self.color.g, self.color.b, self.color.a)
 
-        # Create a cache key based on text content, font size, max dimensions, and alignment
-        cache_key = (text, self.font_size, max_width, max_height, align_percent_x,
-                     align_percent_y, self.color.r, self.color.g, self.color.b, self.color.a)
+            if cache_key in self.texture_cache:
+                texture, text_width, text_height = self.texture_cache[cache_key]
+            else:
+                # Measure the text
+                w = sdl2.Sint32()
+                h = sdl2.Sint32()
+                sdlttf.TTF_SizeUTF8(self.font, text.encode('utf-8'), w, h)
+                text_width = w.value
+                text_height = h.value
 
-        if cache_key in self.texture_cache:
-            texture, text_width, text_height = self.texture_cache[cache_key]
-        else:
-            # Measure the text
-            w = sdl2.Sint32()
-            h = sdl2.Sint32()
-            sdlttf.TTF_SizeUTF8(self.font, text.encode('utf-8'), w, h)
-            text_width = w.value
-            text_height = h.value
+                # Handle horizontal overflow
+                if text_width > max_width:
+                    # Truncate text and add ellipsis
+                    original_text = text
+                    while text_width > max_width and len(text) > 0:
+                        text = text[:-1]
+                        sdlttf.TTF_SizeUTF8(
+                            self.font, (text + "...").encode('utf-8'), w, h)
+                        text_width = w.value
+                        text_height = h.value
+                    text += "..."
+                    if len(text) <= 3 and text != original_text:
+                        text = "..."  # If truncated to nothing, show ellipsis only
 
-            # Handle horizontal overflow
-            if text_width > max_width:
-                # Truncate text and add ellipsis
-                original_text = text
-                while text_width > max_width and len(text) > 0:
-                    text = text[:-1]
-                    sdlttf.TTF_SizeUTF8(
-                        self.font, (text + "...").encode('utf-8'), w, h)
-                    text_width = w.value
-                    text_height = h.value
-                text += "..."
-                if len(text) <= 3 and text != original_text:
-                    text = "..."  # If truncated to nothing, show ellipsis only
+                # Optionally handle vertical overflow here if needed
 
-            # Optionally handle vertical overflow here if needed
-
-            # Render the text to a surface
-            surface = sdlttf.TTF_RenderUTF8_Blended(
-                self.font, text.encode('utf-8'), self.color)
-            if not surface:
-                raise RuntimeError("Failed to render text surface")
-            texture = sdl2.SDL_CreateTextureFromSurface(
-                self.window._renderer.sdlrenderer, surface)
-            if not texture:
+                # Render the text to a surface
+                surface = sdlttf.TTF_RenderUTF8_Blended(
+                    self.font, text.encode('utf-8'), self.color)
+                if not surface:
+                    raise RuntimeError("Failed to render text surface")
+                texture = sdl2.SDL_CreateTextureFromSurface(
+                    self.window._renderer.sdlrenderer, surface)
+                if not texture:
+                    sdl2.SDL_FreeSurface(surface)
+                    raise RuntimeError("Failed to create texture from surface")
                 sdl2.SDL_FreeSurface(surface)
-                raise RuntimeError("Failed to create texture from surface")
-            sdl2.SDL_FreeSurface(surface)
 
-            # Cache the texture and dimensions
-            self.texture_cache[cache_key] = (texture, text_width, text_height)
+                # Cache the texture and dimensions
+                self.texture_cache[cache_key] = (texture, text_width, text_height)
 
-        # Clamp alignment percentages
-        align_percent_x = max(0, min(align_percent_x, 100))
-        align_percent_y = max(0, min(align_percent_y, 100))
+            # Clamp alignment percentages
+            align_percent_x = max(0, min(align_percent_x, 100))
+            align_percent_y = max(0, min(align_percent_y, 100))
 
-        # Calculate position based on alignment percentages
-        pos_x = rect.x + (rect.w - text_width) * (align_percent_x / 100)
-        pos_y = rect.y + (rect.h - text_height) * (align_percent_y / 100)
+            # Calculate position based on alignment percentages
+            pos_x = rect.x + (rect.w - text_width) * (align_percent_x / 100)
+            pos_y = rect.y + (rect.h - text_height) * (align_percent_y / 100)
 
-        # Create a destination rect using your custom Rect class
-        dest_rect = Rect(int(pos_x), int(pos_y), text_width, text_height)
-        # Create an SDL_Rect from the custom Rect when calling SDL functions
-        sdl_dest_rect = sdl2.SDL_Rect(
-            dest_rect.x, dest_rect.y, dest_rect.w, dest_rect.h)
+            # Create a destination rect using your custom Rect class
+            dest_rect = Rect(int(pos_x), int(pos_y), text_width, text_height)
+            # Create an SDL_Rect from the custom Rect when calling SDL functions
+            sdl_dest_rect = sdl2.SDL_Rect(
+                dest_rect.x, dest_rect.y, dest_rect.w, dest_rect.h)
 
-        # Render the texture
-        sdl2.SDL_RenderCopy(self.window._renderer.sdlrenderer,
-                            texture, None, sdl_dest_rect)
+            # Render the texture
+            sdl2.SDL_RenderCopy(self.window._renderer.sdlrenderer,
+                                texture, None, sdl_dest_rect)
 
     def hover(self, target_position, speed):
         self.target_position = target_position

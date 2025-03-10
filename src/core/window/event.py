@@ -19,7 +19,6 @@ class Event:
         if fps != self._fps:
             self._fps = fps
             self.clock.fps = fps
-        
         if not self._fps == -1:
             self.clock.sleep()
         self.events = sdl2.ext.get_events()

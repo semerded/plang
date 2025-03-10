@@ -19,6 +19,3 @@ class Widget(InteractiveRect):
         self._border_width = width
         self._border_color = color
 
-
-def dispose(widget: Widget):
-    del widget

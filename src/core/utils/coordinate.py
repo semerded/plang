@@ -37,7 +37,9 @@ class Coordinate:
         return input
     
     def equals(self, cord: 'Coordinate'):
+        Coordinate.check_input(cord)
         return self.x == cord.x and self.y == cord.y
     
     def difference(self, cord: 'Coordinate'):
-        raise NotImplementedError
+        Coordinate.check_input(cord)
+        return (abs(self.x - cord[0]), abs(self.y - cord[1]))

@@ -27,9 +27,6 @@ class InteractiveRect(Rect):
         
         if self.window.mouse.is_mouse_released():
             self._is_clicked_in_rect = False
-            
-    def __del__(self):
-        self.window._widgets.pop(self.oid())
 
     def is_mouse_over(self) -> bool:
         return self.window.mouse.is_mouse_over(self.pack())
@@ -56,7 +53,7 @@ class InteractiveRect(Rect):
     def disable(self):
         self._enabled = False 
         
-    def pack(self) -> 'InteractiveRect':
+    def pack_interactive_rect(self) -> 'InteractiveRect':
         """
         returns a new rect instance from a rect instance
         """

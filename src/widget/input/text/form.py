@@ -21,12 +21,12 @@ class Form(Widget):
         super().__init__(window, x, y, width, height, bg_color)
         self.input: str = ""
         self.on_enter: Callable[[], None] | None = on_enter
+        
         self._keyboard_input = KeyboardInput(window)
         if active_on_show:
             self._keyboard_input.activate()
+            
         self.text_widget = Text(window, self.input, font, text_color)
-
-       
 
         self.window._widgets[self.oid()] = self
 
@@ -45,7 +45,7 @@ class Form(Widget):
                 self.on_enter()
             else:
                 # print(self.input)
-                self.input = self._keyboard_input.get_input_string()
+                self.input = self._keyboard_input.get_input_string() # TODO fix caret being placed in the wrong place
                 self.text_widget.set_text(self.input)
         else:
             if self.window.mouse.is_mouse_clicked_in_rect(self.pack()):

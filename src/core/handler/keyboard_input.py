@@ -61,7 +61,7 @@ class KeyboardInput:
 
             elif _key in self._UTF8_INPUT_KEYS:
                 curr_input += chr(_key)
-                self._input += curr_input
+                self._input += chr(_key)
                 self._caret_pointer += 1
                 self._show_caret()
 

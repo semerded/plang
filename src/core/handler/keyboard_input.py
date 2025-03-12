@@ -55,13 +55,13 @@ class KeyboardInput:
                     continue
 
             if _key == key.BACKSPACE.value and len(self._input) > 0:
-                self._input = self._input[:-1]
+                self._input = self._input[:self._caret_pointer-1] + self._input[self._caret_pointer:]
                 self._caret_pointer -= 1
                 self._show_caret()
 
             elif _key in self._UTF8_INPUT_KEYS:
                 curr_input += chr(_key)
-                self._input += chr(_key)
+                self._input = self._input[:self._caret_pointer] + chr(_key) + self._input[self._caret_pointer:]
                 self._caret_pointer += 1
                 self._show_caret()
 
@@ -74,6 +74,7 @@ class KeyboardInput:
     def clear_input(self) -> str:
         input = self._input
         self._input = ""
+        self._caret_pointer = 0
         return input
 
     def activate(self) -> None:

@@ -35,6 +35,7 @@ from src.widget.input.button.button import Button
 from src.widget.input.button.radio_button import RadioButton
 from src.widget.input.button.checkbox import Checkbox
 from src.widget.input.text.form import Form
+from src.widget.input.text.form_field import FormField
 #   static widgets
 from src.widget.static.text_box import TextBox
 #   debug widgets

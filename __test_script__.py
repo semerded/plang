@@ -14,7 +14,9 @@ radio2 = pl.RadioButton(window, "1", 200, 100, 20)
 radio3 = pl.RadioButton(window, "1", 300, 100, 20)
 
 form = pl.Form(window, 100, 300, 200, 80)
-# text_widget = pl.Text(window, "hello world", pl.Font(pl.fonts.ARIAL, 22), pl.Color.BLACK)
+
+form_field = pl.FormField(window, 100, 500, 400, 80)
+# text_widget = pl.Text(window, "hello worldthis is a newlinenext line!!!", pl.Font(pl.fonts.ARIAL, 22), pl.Color.WHITE)
 
 
 
@@ -35,6 +37,7 @@ while True:
     # if button.is_pressing():
     #     print(button.is_held_for(1))
     form.draw()
+    form_field.draw()
         
     # window.draw.polygon_with_border([(500, 300), (200, 300), (100, 100), (500, 100)], 20, pl.Color.GREEN, pl.Color.LESS_WHITE)
         
@@ -46,5 +49,6 @@ while True:
     # window.draw.triangle_with_border((900, 500), (800, 540 ), (750, 600), 4,  pl.Color.YELLOW, pl.Color.BLUE)
     # button.draw()
     # button2.draw()
+    # text_widget.draw_in_rect(pl.Rect(500, 300, 200, 80))
     # print(window.sc.vw(100), window.sc.vh(100))
         

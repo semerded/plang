@@ -1,17 +1,21 @@
 from typing import Annotated
 from ...typedef import *
 from ..utils.coordinate import Coordinate
-from sdl2 import SDL_Rect, SDL_HasIntersection
+from .. import bridge
 
-class Rect(SDL_Rect):
+class Rect():
     """
     A rect is a rectangle defined by x, y, width and height. It is used to define a region on the screen. 
     Rects can be used to detect collisions, either with the mouse or with other rects. 
     They can also be used to update certain parts of the screen
     """
     def __init__(self, x: int, y: int, width: int, height: int) -> None:
-        super().__init__(x, y, width, height)
-
+        self.x = x
+        self.y = y
+        self.w = width
+        self.h = height
+        self._c_rect = bridge.ffi.new("SDL_Rect *", [x, y, width, height])
+        
     @classmethod
     def from_circle(cls, center: coordinate, radius: int) -> 'Rect':
         """

@@ -1,8 +1,11 @@
-from .typedef import *
-from . import data
+from ..typedef import *
+from .. import data
 from typing import NoReturn
+from . import bridge
 
 log_file_location: str = "" # TODO: set to a log dir
+
+class SDL_Error(Exception): ...
 
 class Messenger:
     @staticmethod
@@ -62,3 +65,8 @@ class Messenger:
         """
         # add log message
         raise error
+    
+    @staticmethod
+    def sdl_error(info: str = "") -> NoReturn:
+        err = bridge.ffi.string(bridge.sdl.SDL_GetError()).decode('utf-8')
+        raise SDL_Error(info + err)

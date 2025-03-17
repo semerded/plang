@@ -1,116 +1,82 @@
-import sdl2
-import sdl2.ext
-from typing import Any, Callable, TYPE_CHECKING
-from ...typedef import screen_unit, RGBAvalue, RGBvalue
-from ...core.window.event import Event
-from ...core.window.keyboard import Keyboard
-from ...core.window.mouse import Mouse
-from ...core.utils.screenunits import screen_units
-from ...core.window.draw import Draw
-from ... import data, Color
-from ...messenger import Messenger
-import sys
+from .. import bridge
+from ... import data
+from ..messenger import Messenger
+from ..base.OID import OID
+import time
 
-if TYPE_CHECKING:
-    from ...widget.core.widget import Widget
-    from ...core.handler.OID import OID
+SDL_WINDOW_SHOWN       = 0x00000004
+SDL_RENDERER_ACCELERATED = 0x00000002
+
 
 class Window:
-    """
-    Create a window to draw on and take events from. Multiple windows can be created
-    """
-    def __init__(self, width: screen_unit, height: screen_unit, fps: int = 60, show_on_creation: bool = True, title: str = data.default_window_name):
-        self.title: str = title
-        self.width: screen_unit = width
-        self.height: screen_unit = height
-        if fps < -1 or fps == 0:
-            Messenger.fatalError(ValueError("fps can't be negative or 0 (-1 can be used for unlimited fps)"))
-        self._fps = fps
-        
-        sdl2.ext.init()
-        self._window = sdl2.ext.Window(self.title, size=(self.width, self.height))
-        self._renderer = sdl2.ext.Renderer(self._window, flags=sdl2.SDL_RENDERER_ACCELERATED)
-        
-            
-        data.window_count += 1
-            
-        self._event = Event(self._fps)
-        self.keyboard: Keyboard  = self._event.keyboard
-        self.mouse: Mouse = self._event.mouse
-        self.sc: screen_units = screen_units(width, height)
-        self.draw: Draw = Draw(self._window, self._renderer)
-        self.frame_counter = 0
-        self.shared_data: dict[str, Any] = {}
-        self._widgets: dict[str, Widget] = {}
-
-        if show_on_creation:
-            self._window.show()
-        
-    def event_handler(self, background_color: (RGBvalue | RGBAvalue) = Color.BLACK, fps: int = None) -> None:
-        """
-        Handle keyboard, mouse, clock and window events\n
-        Fps can be changed dynamically
-        """
-        if fps == None:
-            fps = self._fps
-        elif fps < -1 or fps == 0:
-            Messenger.fatalError(ValueError("fps can't be negative or 0 (-1 can be used for unlimited fps)"))
-        self.frame_counter += 1
-
-        sdl2.SDL_RenderPresent(self._renderer.sdlrenderer)   
-        sdl2.SDL_SetRenderDrawColor(self._renderer.sdlrenderer, *Color._handle_rgb_rgba(background_color))
-     
-        sdl2.SDL_RenderClear(self._renderer.sdlrenderer)
-        
-        if not self.is_init_frame():
-            self._event.handle(fps, self.close)
-            for widget in self._widgets.values():
-                widget._cycle()        
-    
-
-      
-                            
-    def hide(self) -> None:
-        """
-        Hide the window
-        """ 
-        self._window.hide()
-        
-    def minimize(self) -> None:
-        """
-        Minimize the window\nThe window will go in a slow state
-        """
-        self._window.minimize()
-
-    def show(self) -> None:
-        self._window.show()
-
-    def clear(self, color = (0, 0, 0)) -> None:
-        """
-        Repaint the full window with a specified color
-        """
-        self._renderer.clear(color)
-
-    def close(self, quit_program: bool = False) -> None:
-        """
-        close the window
-        """
-        self._window.close()
-        data.window_count -= 1
-        if quit_program or data.window_count == 0:
-            sdl2.ext.quit()
-            if data.debugging and data.window_count == 0:
-                print("PLANG exited because there are 0 windows left")
-            sys.exit(0) # using sys library to be able to compile to EXE
-    
-    def resize(self, width: screen_unit, height: screen_unit):
+    def __init__(self, width, height, window_name: str = data.default_window_name):
         self.width = width
         self.height = height
-        self.sc.width = width
-        self.sc.height = height
-        self.update()
+        self._window_name = str.encode(window_name)
+        self.id = OID()
         
+        self._window = bridge.sdl.SDL_CreateWindow(self._window_name, width, height, SDL_WINDOW_SHOWN)
+        if self._window == bridge.ffi.NULL:
+            Messenger.sdl_error("failed to create SDL window")
+        elif data.debugging:
+            Messenger.info(f"Created a SDL window with size ({self.width}, {self.height})")
+        self._renderer = bridge.sdl.SDL_CreateRenderer(self._window, bridge.ffi.NULL)
+        
+        if self._renderer == bridge.ffi.NULL:
+            Messenger.sdl_error("failed to create SDL renderer")
+            
+        data.window_tracker[self.id()] = self
+        
+    def event_handeler(self):
+        pass
     
-    # frame indentifiers
-    def is_init_frame(self) -> bool:
-        return self.frame_counter <= 1
+    def fill(self, color):
+        if not bridge.sdl.SDL_SetRenderDrawColor(self._renderer, *color):
+            Messenger.sdl_error("failed to set SDL renderer draw color")
+        if not bridge.sdl.SDL_RenderClear(self._renderer):
+            Messenger.sdl_error("failed to clear SDL renderer")
+            
+    def destroy(self):
+        bridge.sdl.SDL_DestroyRenderer(self._renderer)
+        bridge.sdl.SDL_DestroyWindow(self._window)
+        if self.id() in data.window_tracker.keys():
+            data.window_tracker.pop(self.id())
+        
+        if data.debugging:
+            Messenger.info(f"Window with name '{self.window_name}' succesfully destroyed.")
+            
+    def __del__(self):
+        self.destroy() # force destroy when garbage collected
+            
+    def set_size(self, width, height):
+        bridge.sdl.SDL_SetWindowSize(self._window, width, height)
+        self.width = width
+        self.height = height
+        if data.debugging:
+            Messenger.info(f"Window with name '{self.window_name}' successfully resized to ({width}, {height}).")
+    
+    def show(self):
+        bridge.sdl.SDL_ShowWindow(self._window)
+        if data.debugging:
+            Messenger.info(f"Window with name '{self.window_name}' successfully shown.")
+            
+    def hide(self):
+        bridge.sdl.SDL_HideWindow(self._window)
+        if data.debugging:
+            Messenger.info(f"Window with name '{self.window_name}' successfully hidden.")
+    
+    def minimize(self):
+        bridge.sdl.SDL_MinimizeWindow(self._window)
+        if data.debugging:
+            Messenger.info(f"Window with name '{self.window_name}' successfully minimized.")
+            
+    def update(self):
+        bridge.sdl.SDL_RenderPresent(self._renderer)
+      
+    @property
+    def window_name(self):
+        return self._window_name.decode('utf-8')
+    
+    @window_name.setter        
+    def set_window_name(self, window_name: str):
+            self._window_name = str.encode(window_name)

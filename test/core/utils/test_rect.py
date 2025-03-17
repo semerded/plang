@@ -53,3 +53,8 @@ def test_expand_shrink_height():
 def test_place_holder():
     rect = Rect.place_holder()
     assert rect.unpack() == (0, 0, 0, 0)
+    
+@pytest.mark.parametrize("x, y, expected", [(100, 100, True), (99, 100, False), (300, 120, True), (301, 120, False), (200, 200, True), (200, 201, False)])
+def test_point_in_rect(x, y, expected):
+    rect = Rect(100, 100, 200, 100)
+    assert expected == rect.point_in_rect(x, y)

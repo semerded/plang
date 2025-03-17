@@ -1,13 +1,10 @@
 import src as pl
 
 window = pl.Window(600, 800)
+# window2 = pl.Window(100, 100)
 
-window.fill((255, 0, 0, 255))
-window.update()
-
-
-
-import time
-
-time.sleep(5)
-
+while True:
+    window.event_handeler()
+    # window2.event_handeler()
+    window.fill(pl.Color.BITTERSWEET)
+    window.update()

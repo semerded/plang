@@ -2,6 +2,7 @@
 test.py
 .vscode
 .venv
+.pypy_venv
 /build
 /dist
 

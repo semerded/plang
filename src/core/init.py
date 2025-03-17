@@ -4,6 +4,7 @@ import sys
 from .messenger import Messenger
 from . import bridge
 from .. import data
+from ..core.window.event import Event
 
 from . import cdef
 
@@ -22,4 +23,8 @@ def init_SDL3_DLL(path):
 def init_video():
     if not bridge.sdl.SDL_Init(SDL_INIT_VIDEO):
         Messenger.sdl_error("failed to initialize SDL video")
+        
+
+def init_plang():
+    data.event = Event()
 

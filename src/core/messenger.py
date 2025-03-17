@@ -2,7 +2,11 @@ from ..typedef import *
 from .. import data
 from typing import NoReturn
 from . import bridge
+from colorama import init as colorama_init
+from colorama import Fore
+from colorama import Style
 
+colorama_init()
 log_file_location: str = "" # TODO: set to a log dir
 
 class SDL_Error(Exception): ...
@@ -12,7 +16,22 @@ class Messenger:
     def configure(log_file_location: path = None):
         log_file_location = log_file_location
     
+    @staticmethod
+    def succes(message: str) -> None:
+        """
+        send a green colored success message to stdout when not in production mode\n
+        message will be send in green
+        """
+        print(Fore.GREEN + message + Style.RESET_ALL)
     
+    @staticmethod
+    def debug(message: str) -> None:
+        """
+        send a blue colored debug message to stdout when not in production mode\n
+        message will be send in blue
+        """
+        if data.debugging:
+            print(Fore.BLUE + message + Style.RESET_ALL)
     
     @staticmethod
     def info(message: str) -> None:
@@ -27,7 +46,7 @@ class Messenger:
         send a yellow colored warning to stdout when in not in production mode\n
         message will be send in yellow
         """
-        print(message)
+        print(Fore.YELLOW + message + Style.RESET_ALL)
         
     @staticmethod    
     def error(error: str | Exception, terminate: bool = False) -> (NoReturn | None):
@@ -40,7 +59,7 @@ class Messenger:
             if isinstance(error) == Exception:
                 raise error
             raise Exception(error)
-        print(error)
+        print(Fore.RED + error + Style.RESET_ALL)
         
     @staticmethod   
     def criticalError(error: Exception, terminate_in_debug_mode: bool = False) -> (NoReturn | None):
@@ -55,7 +74,7 @@ class Messenger:
         else: 
             print("Critical Error in debug mode!")
             print("The program may not function properly from this point forwards!")
-            print(error)
+            print(Fore.MAGENTA + error + Style.RESET_ALL)
             
     @staticmethod       
     def fatalError(error: Exception) -> NoReturn:

@@ -6,7 +6,7 @@ from . import bridge
 from .. import data
 from ..core.window.event import Event
 
-from . import cdef
+from ..core.cdef import cdef
 
 SDL_INIT_VIDEO         = 0x00000020
 SDL_WINDOW_SHOWN       = 0x00000004

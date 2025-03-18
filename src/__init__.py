@@ -7,6 +7,8 @@ init.init_plang()
 
 del os, init
 
+from src.core.window.event import event_handler
+
 from src.color import Color
 from src.core.messenger import Messenger
 

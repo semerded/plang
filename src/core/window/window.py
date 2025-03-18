@@ -14,7 +14,6 @@ class Window:
         self.width = width
         self.height = height
         self._window_name = str.encode(window_name)
-        self.id = OID()
         
         self._window = bridge.sdl.SDL_CreateWindow(self._window_name, width, height, SDL_WINDOW_SHOWN)
         if self._window == bridge.ffi.NULL:
@@ -25,36 +24,25 @@ class Window:
         if self._renderer == bridge.ffi.NULL:
             Messenger.sdl_error("failed to create SDL renderer")
             
+        self.id = bridge.sdl.SDL_GetWindowID(self._window)
         self._event = data.event
+        
+        self._active = True
             
-        data.window_tracker[self.id()] = self
+        data.window_tracker[self.id] = self
         
-    def event_handeler(self):
-        return_value = self._event.handle()
-        if bridge.ffi.string(bridge.sdl.SDL_GetError()).decode('utf-8'):
-            Messenger.sdl_error("failed to poll SDL events")
-        
-
-        match return_value:
-            case EventReturn.QUIT:
-                self.destroy()
-                exit.exit_on_zero_windows()
-            # case EventReturn.HIDE:
-            #     self.hide()
-            # case EventReturn.SHOW:
-            #     self.show()
     
     def fill(self, color):
         if not bridge.sdl.SDL_SetRenderDrawColor(self._renderer, *color):
             Messenger.sdl_error("failed to set SDL renderer draw color")
         if not bridge.sdl.SDL_RenderClear(self._renderer):
             Messenger.sdl_error("failed to clear SDL renderer")
-            
+        
     def destroy(self, remove_from_tracker: bool = True):
         bridge.sdl.SDL_DestroyRenderer(self._renderer)
         bridge.sdl.SDL_DestroyWindow(self._window)
-        if remove_from_tracker and self.id() in data.window_tracker.keys():
-            data.window_tracker.pop(self.id())
+        if remove_from_tracker and self.id in data.window_tracker.keys():
+            data.window_tracker.pop(self.id)
         
         Messenger.debug(f"Window with name '{self.window_name}' succesfully destroyed.")
             

@@ -1,5 +1,6 @@
 from random import choice
 from typing import TYPE_CHECKING
+from .typedef import path
 
 if TYPE_CHECKING:
     from .core.window.window import Window
@@ -15,3 +16,9 @@ default_window_name: str = f"PLANG window {choice(_emoji_list)}"
 window_tracker: dict[str, 'Window'] = {}
 active_window_id: int = -1
 event: 'Event' = None
+
+dll_path: path = None
+cwd: path = None
+
+def get_dll_path() -> path:
+    return dll_path

@@ -17,7 +17,7 @@ class Event:
         
     def handle(self) -> EventReturn:
         while bridge.sdl.SDL_PollEvent(self.event):
-            print(eventType(self.event.type).name)
+            # print(eventType(self.event.type).name)
             event_type = self.event.type
             
             match event_type:
@@ -41,7 +41,7 @@ class Event:
                     scancode = kb.scancode   # Should correspond to SDL_SCANCODE values.
                     sym = kb.key             # Virtual key code; may be 0 if it wasn't mapped.
                     mod = kb.mod             # Modifier bitmask.
-                    print(bridge.ffi.string(bridge.sdl.SDL_GetKeyName(bridge.sdl.SDL_GetKeyFromScancode(scancode, mod, False))).decode('utf-8'))
+                    # print(bridge.ffi.string(bridge.sdl.SDL_GetKeyName(bridge.sdl.SDL_GetKeyFromScancode(scancode, mod, False))).decode('utf-8'))
                     # print(f"KeyDown event: scancode={scancode}, sym={sym}, mod={mod}")
             
                 case eventType.EVENT_KEY_UP.value:
@@ -52,16 +52,20 @@ class Event:
                     # print(f"KeyUp event: scancode={scancode}, sym={sym}, mod={mod}")
             
                 case eventType.EVENT_MOUSE_BUTTON_DOWN.value:
-                    print("Mouse button down event")
+                    pass
+                    # print("Mouse button down event")
             
                 case eventType.EVENT_MOUSE_BUTTON_UP.value:
-                    print("Mouse button up event")
+                    pass
+                    # print("Mouse button up event")
             
                 case eventType.EVENT_MOUSE_MOTION.value:
-                    print("Mouse motion event")
+                    # print("Mouse motion event")
+                    pass
             
                 case eventType.EVENT_MOUSE_WHEEL.value:
-                    print("Mouse wheel event")
+                    pass
+                    # print("Mouse wheel event")
 
 
 def event_handler():

@@ -21,22 +21,22 @@ class Event:
             event_type = self.event.type
             
             match event_type:
-                case eventType.EVENT_QUIT.value: 
+                case eventType.QUIT.value: 
                     print("Quit event received. Exiting...")
                     # data.window_tracker[data.active_window_id].destroy()
                     exit.exit()
                     
                 
-                case eventType.EVENT_WINDOW_CLOSE_REQUESTED.value:
+                case eventType.WINDOW_CLOSE_REQUESTED.value:
                     data.window_tracker[data.active_window_id].destroy()
                 
-                case eventType.EVENT_WINDOW_FOCUS_GAINED.value:
+                case eventType.WINDOW_FOCUS_GAINED.value:
                     data.active_window_id = self.event.window.windowID
                     
-                case eventType.EVENT_WINDOW_FOCUS_LOST.value:
+                case eventType.WINDOW_FOCUS_LOST.value:
                     data.active_window_id = -1
             
-                case eventType.EVENT_KEY_DOWN.value:
+                case eventType.KEY_DOWN.value:
                     kb = self.event.key
                     scancode = kb.scancode   # Should correspond to SDL_SCANCODE values.
                     sym = kb.key             # Virtual key code; may be 0 if it wasn't mapped.
@@ -44,26 +44,26 @@ class Event:
                     # print(bridge.ffi.string(bridge.sdl.SDL_GetKeyName(bridge.sdl.SDL_GetKeyFromScancode(scancode, mod, False))).decode('utf-8'))
                     # print(f"KeyDown event: scancode={scancode}, sym={sym}, mod={mod}")
             
-                case eventType.EVENT_KEY_UP.value:
+                case eventType.KEY_UP.value:
                     kb = self.event.key
                     scancode = kb.scancode   # Should correspond to SDL_SCANCODE values.
                     sym = kb.key             # Virtual key code; may be 0 if it wasn't mapped.
                     mod = kb.mod             # Modifier bitmask.
                     # print(f"KeyUp event: scancode={scancode}, sym={sym}, mod={mod}")
             
-                case eventType.EVENT_MOUSE_BUTTON_DOWN.value:
+                case eventType.MOUSE_BUTTON_DOWN.value:
                     pass
                     # print("Mouse button down event")
             
-                case eventType.EVENT_MOUSE_BUTTON_UP.value:
+                case eventType.MOUSE_BUTTON_UP.value:
                     pass
                     # print("Mouse button up event")
             
-                case eventType.EVENT_MOUSE_MOTION.value:
+                case eventType.MOUSE_MOTION.value:
                     # print("Mouse motion event")
                     pass
             
-                case eventType.EVENT_MOUSE_WHEEL.value:
+                case eventType.MOUSE_WHEEL.value:
                     pass
                     # print("Mouse wheel event")
 

@@ -26,6 +26,15 @@ def init_video():
     if not bridge.sdl.SDL_Init(SDL_INIT_VIDEO):
         Messenger.sdl_error("failed to initialize SDL video")
         
+    # num_drivers = bridge.sdl.SDL_GetNumRenderDrivers()
+    # if num_drivers <= 0:
+    #     print("No render drivers available or failed to retrieve render driver count.")
+    # else:
+    #     print("Available renderer drivers:")
+    #     for i in range(num_drivers):
+    #         driver_name = bridge.ffi.string(bridge.sdl.SDL_GetRenderDriver(i)).decode("utf-8")
+    #         print(f"{i + 1}. {driver_name}")
+            
 
 def init_plang():
     data.event = Event()

@@ -1,20 +1,27 @@
 from typing import TYPE_CHECKING
-from src.core.messenger import Messenger, get_log_path
+from src.core.messenger import Messenger, Logger
 
 #? we don't want these vars/modules to show up in the typechecking
 if not TYPE_CHECKING:
     import os
     from src.core import init
-    from src.core.messenger import messenger_init
-    SDL3_DLL_PATH = init.init_SDL3_DLL(os.path.abspath(__file__))
+    from src.core.config.read_config import read_config_file, find_config_file
+    lib_path = os.path.abspath(__file__)
+    SDL3_DLL_PATH = init.init_SDL3_DLL(lib_path)
     init.init_video()
     init.init_plang()
 
     from src import data
     data.dll_path = SDL3_DLL_PATH
     data.cwd = os.getcwd()
+    data.lib_path = lib_path
     
-    messenger_init()
+    read_config_file(find_config_file(data.cwd))
+    
+    Logger._config_logger()
+    if Logger._check_log_file_size():
+        Logger._cleanup_oldest_log_file()
+    Logger.log_system_specs()
     
     if data.debugging:
         Messenger.info("Debug mode enabled")
@@ -23,7 +30,7 @@ if not TYPE_CHECKING:
         Messenger.success("PLANG ready to run...")
 
     # cleanup init
-    del os, init, data, messenger_init, TYPE_CHECKING
+    del os, init, data, TYPE_CHECKING
 
 # start importing modules
 from src.data import get_dll_path

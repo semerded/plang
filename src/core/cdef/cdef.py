@@ -16,6 +16,10 @@ typedef Uint16 SDL_Keymod;
 
 bool SDL_Init(Uint32 flags);
 void SDL_Quit(void);
+const char* SDL_GetError(void);
+
+// surface
+typedef struct SDL_Surface SDL_Surface;
 
 // window
 typedef struct SDL_Window SDL_Window;
@@ -26,6 +30,10 @@ bool SDL_ShowWindow(SDL_Window* window);
 bool SDL_HideWindow(SDL_Window* window);
 bool SDL_MinimizeWindow(SDL_Window* window);
 SDL_WindowID SDL_GetWindowID(SDL_Window *window);
+bool SDL_SetWindowTitle(SDL_Window *window, const char *title);
+bool SDL_SetWindowIcon(SDL_Window *window, SDL_Surface *icon);
+bool SDL_SetWindowMinimumSize(SDL_Window *window, int min_w, int min_h);
+bool SDL_SetWindowMaximumSize(SDL_Window *window, int max_w, int max_h);
 
 // renderer
 typedef struct SDL_Renderer SDL_Renderer;
@@ -35,8 +43,16 @@ bool SDL_SetRenderDrawColor(SDL_Renderer* renderer, Uint8 r, Uint8 g, Uint8 b, U
 bool SDL_RenderClear(SDL_Renderer* renderer);
 bool SDL_RenderPresent(SDL_Renderer* renderer);
 bool SDL_RenderFillRect(SDL_Renderer* renderer, const void *rect);
+bool SDL_SetRenderVSync(SDL_Renderer *renderer, int vsync);
 
-const char* SDL_GetError(void);
+typedef struct SDL_RendererInfo SDL_RendererInfo;
+int SDL_GetNumRenderDrivers(void);
+const char* SDL_GetRenderDriver(int index);
+
+// time
+Uint64 SDL_GetPerformanceFrequency(void);
+Uint64 SDL_GetPerformanceCounter(void);
+
 
 
 /* For SDL3, you might also query display info.

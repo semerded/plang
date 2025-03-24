@@ -1,0 +1,9 @@
+{
+    "debug": true,
+    "messenger": {
+        "add_console_timestamp": true
+    },
+    "logger": {
+        "log_file_limit": 30
+    }
+}

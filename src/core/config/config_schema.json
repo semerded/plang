@@ -1,0 +1,31 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "PLANG Configuration",
+    "description": "Configuration for PLANG",
+    "$comment": "This is the configuration file for PLANG",
+    "type": "object",
+    "properties": {
+        "debug": {
+            "type": "boolean",
+            "default": false,
+            "$comment": "When debug mode is enabled, the messenger will print more information to the console. It also allows the program to keep running even if a critical error occurs. It will still terminate on fatal errors and SDL errors."
+        },
+        "production_mode": { "type": "boolean", "default": false },
+        "messenger": {
+            "type": "object",
+            "$comment": "Configuration for the messenger",
+            "properties": {
+                "add_console_timestamp": { "type": "boolean", "default": true, "$comment": "Whether to add a timestamp to the console" }
+            }
+        },
+        "logger": {
+            "type": "object",
+            "$comment": "Configuration for the logger",
+            "properties": {
+                "logging_enabled": { "type": "boolean", "default": true, "$comment": "When the logger is enabled, all messages that are send " },
+                "log_file_location": { "type": "string", "default": "log", "$comment": "The location of the log file, It should be a relative path." },
+                "log_file_limit": {"type": "integer", "default": 100, "$comment": "The max amount of log files that can be created before the oldest one is deleted."}
+            }
+        }
+    }
+}

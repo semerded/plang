@@ -15,7 +15,8 @@
             "type": "object",
             "$comment": "Configuration for the messenger",
             "properties": {
-                "add_console_timestamp": { "type": "boolean", "default": true, "$comment": "Whether to add a timestamp to the console" }
+                "add_console_timestamp": { "type": "boolean", "default": true, "$comment": "Whether to add a timestamp to the console" },
+                "print_stacktrace": {"type": "boolean", "default": true, "$comment": "Whether to print the stacktrace when an error occurs"}
             }
         },
         "logger": {

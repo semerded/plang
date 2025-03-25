@@ -28,6 +28,7 @@ add_console_timestamp: bool = None
 logging_enabled: bool = None
 log_file_limit: int = None
 logger_file_name: str = None
+print_stacktrace: bool = None
 
 def get_dll_path() -> path:
     return dll_path

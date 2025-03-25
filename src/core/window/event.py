@@ -1,6 +1,6 @@
 from .. import bridge
 from enum import IntEnum
-from ...core.cdef.cdef_bridge import eventType
+from ...core.cdef.event_type_enum import eventType
 from ... import data
 from ..messenger import Messenger
 from ...core import exit
@@ -52,7 +52,9 @@ class Event:
                     # print(f"KeyUp event: scancode={scancode}, sym={sym}, mod={mod}")
             
                 case eventType.MOUSE_BUTTON_DOWN.value:
+                    raise KeyError()
                     pass
+                    
                     # print("Mouse button down event")
             
                 case eventType.MOUSE_BUTTON_UP.value:

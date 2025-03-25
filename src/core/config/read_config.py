@@ -26,6 +26,7 @@ def read_config_file(path) -> None:
     messenger_config = config.get("messenger", {})
     
     data.add_console_timestamp = messenger_config.get("add_console_timestamp", True)
+    data.print_stacktrace = messenger_config.get("print_stacktrace", True)
     
     logger_config = config.get("logger", {})
         

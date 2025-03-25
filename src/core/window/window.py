@@ -4,6 +4,7 @@ from ..messenger import Messenger
 from ..base.OID import OID
 from .. import exit
 from .event import Event, EventReturn
+from colorama import Fore, Style
 
 SDL_WINDOW_FULLSCREEN         = 0x00000001
 SDL_WINDOW_OPENGL             = 0x00000002
@@ -60,13 +61,13 @@ class Window:
         self.id = bridge.sdl.SDL_GetWindowID(self._window)
         self.set_window_name(
             "[" + str(self.id) + "] " + self.get_window_name())
-        Messenger.debug(
-            f"Created a SDL window with size ({self.width}, {self.height}) | ID: {self.id}")
+        self._messenger_prefix =  f"{{Window ~ ID: {self.id}}} {' ' if self.id < 10 else ''}-> "
+        Messenger.debug(f"Created a SDL window with size ({self.width}, {self.height})", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
         self._renderer = bridge.sdl.SDL_CreateRenderer(
             self._window, bridge.ffi.NULL)
 
         if self._renderer == bridge.ffi.NULL:
-            Messenger.sdl_error("failed to create SDL renderer")
+            Messenger.sdl_error("failed to create SDL renderer", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
         if vsync:
             self.set_vsync(True)
@@ -84,7 +85,7 @@ class Window:
             data.window_tracker.pop(self.id)
 
         Messenger.debug(
-            f"Window with name '{self.get_window_name()}' successfully destroyed.")
+            f"Window with name '{self.get_window_name()}' successfully destroyed.", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     def __del__(self):
         self.destroy()  # force destroy when garbage collected
@@ -94,12 +95,12 @@ class Window:
         self.width = width
         self.height = height
         Messenger.debug(
-            f"Window with name '{self.get_window_name()}' successfully resized to ({width}, {height}).")
+            f"Window with name '{self.get_window_name()}' successfully resized to ({width}, {height}).", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     def fill(self):
         if self._fill_color != None:
             if not bridge.sdl.SDL_SetRenderDrawColor(self._renderer, *self._fill_color):
-                Messenger.sdl_error("failed to set SDL renderer draw color")
+                Messenger.sdl_error("failed to set SDL renderer draw color", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     def set_fill_color(self, color) -> None:
         self._fill_color = color
@@ -117,34 +118,34 @@ class Window:
         else:
             value = 0
         if not bridge.sdl.SDL_SetRenderVSync(self._renderer, value):
-            Messenger.sdl_error("failed to set SDL renderer vsync")
+            Messenger.sdl_error("failed to set SDL renderer vsync", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     def set_icon(self, surface):
         if not bridge.sdl.SDL_SetWindowIcon(self._window, surface):
-            Messenger.sdl_error("failed to set SDL window icon")
+            Messenger.sdl_error("failed to set SDL window icon", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     def set_min_size(self, width, height):
         if not bridge.sdl.SDL_SetWindowMinimumSize(self._window, width, height):
-            Messenger.sdl_error("failed to set SDL window minimum size")
+            Messenger.sdl_error("failed to set SDL window minimum size", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     def set_max_size(self, width, height):
         if not bridge.sdl.SDL_SetWindowMaximumSize(self._window, width, height):
-            Messenger.sdl_error("failed to set SDL window maximum size")
+            Messenger.sdl_error("failed to set SDL window maximum size", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     def show(self):
         bridge.sdl.SDL_ShowWindow(self._window)
         Messenger.debug(
-            f"Window with name '{self.get_window_name()}' successfully shown.")
+            f"Window with name '{self.get_window_name()}' successfully shown.", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     def hide(self):
         bridge.sdl.SDL_HideWindow(self._window)
         Messenger.debug(
-            f"Window with name '{self.get_window_name()}' successfully hidden.")
+            f"Window with name '{self.get_window_name()}' successfully hidden.", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     def minimize(self):
         bridge.sdl.SDL_MinimizeWindow(self._window)
         Messenger.debug(
-            f"Window with name '{self.get_window_name()}' successfully minimized.")
+            f"Window with name '{self.get_window_name()}' successfully minimized.", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     def update(self):
         bridge.sdl.SDL_RenderPresent(self._renderer)
@@ -155,7 +156,7 @@ class Window:
     def set_window_name(self, window_name: str):
         self._window_name = str.encode(window_name)
         if not bridge.sdl.SDL_SetWindowTitle(self._window, self._window_name):
-            Messenger.sdl_error("failed to set SDL window name")
+            Messenger.sdl_error("failed to set SDL window name", descriptor=self._messenger_prefix, descriptor_color=Fore.CYAN)
 
     @staticmethod
     def is_active(window) -> bool:

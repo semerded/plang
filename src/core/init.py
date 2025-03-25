@@ -6,21 +6,31 @@ from . import bridge
 from .. import data
 from ..core.window.event import Event
 from ..typedef import path
+from ..core.exit import cleanup
+import atexit
 
-from ..core.cdef import cdef
+from .cdef import cdef_sld # runs cdef 
 
 SDL_INIT_VIDEO         = 0x00000020
 SDL_WINDOW_SHOWN       = 0x00000004
 SDL_RENDERER_ACCELERATED = 0x00000002
 
-def init_SDL3_DLL(path) -> path:
-    current_dir = os.path.dirname(path)
-    dll_path = os.path.join(current_dir, "dll", "SDL3.dll")
-    if not os.path.isfile(dll_path):
-        sys.exit(f"SDL3.dll not found at {dll_path}. Please place SDL3.dll in the project folder.")
+DLL_NAMES = ["SDL3.dll",]
 
-    bridge.sdl = bridge.ffi.dlopen(dll_path)
-    return dll_path
+def init_dlls(lib_path) -> path:
+    dll_folder = os.path.join(lib_path, "dll")
+    if not os.path.isdir(dll_folder):
+        sys.exit(f"Folder {dll_folder} not found. Please create this folder and place all the DLLs in it.")
+    
+    def get_dll(dll_folder, dll_name) -> object:
+        dll_path = os.path.join(dll_folder, dll_name)
+        if not os.path.isfile(dll_path):
+            sys.exit(f"{dll_name} not found in folder {dll_folder}. Please place {dll_name} in the project folder.")
+        return bridge.ffi.dlopen(dll_path)
+        
+    bridge.sdl = get_dll(dll_folder, DLL_NAMES[0])
+    
+    return dll_folder
     
 def init_video():
     if not bridge.sdl.SDL_Init(SDL_INIT_VIDEO):
@@ -38,4 +48,6 @@ def init_video():
 
 def init_plang():
     data.event = Event()
+    # atexit.register(cleanup)
+    sys.excepthook = Messenger.unexpected_error
 

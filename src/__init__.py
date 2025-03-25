@@ -6,15 +6,12 @@ if not TYPE_CHECKING:
     import os
     from src.core import init
     from src.core.config.read_config import read_config_file, find_config_file
-    lib_path = os.path.abspath(__file__)
-    SDL3_DLL_PATH = init.init_SDL3_DLL(lib_path)
-    init.init_video()
-    init.init_plang()
-
     from src import data
-    data.dll_path = SDL3_DLL_PATH
+    data.lib_path = os.path.abspath(__file__)
+    data.dll_folder = init.init_dlls(os.path.split(data.lib_path)[0])
+
     data.cwd = os.getcwd()
-    data.lib_path = lib_path
+    print(data.lib_path)
     
     read_config_file(find_config_file(data.cwd))
     
@@ -23,14 +20,18 @@ if not TYPE_CHECKING:
         Logger._cleanup_oldest_log_file()
     Logger.log_system_specs()
     
+    init.init_video()
+    init.init_plang()
+    
     if data.debugging:
         Messenger.info("Debug mode enabled")
-        Messenger.debug("DLL found in " + data.dll_path)
+        Messenger.debug("DLLs found in " + data.dll_folder)
         Messenger.debug("Running script from " + data.cwd)
         Messenger.success("PLANG ready to run...")
 
     # cleanup init
-    del os, init, data, TYPE_CHECKING
+    del os, init, data
+del TYPE_CHECKING
 
 # start importing modules
 from src.data import get_dll_path

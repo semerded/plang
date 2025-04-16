@@ -1,16 +1,16 @@
-# PLANG
-PLANG is a python library written on top of the brand new C based SDL3 library. Pre-made widgets with a lot of customization make development easier.
-> plang stands for Python Library For Apps & Games
+# Motra
+Motra is a python library written on top of the brand new C based SDL3 library. Pre-made widgets with a lot of customization make development easier.
+> the name is a fusion from the words 'motion' & 'framework'
 ----------
 # Features
 ## Low level access via High level API
-SDL3 is an excellent low level library to access all aspects of your system. PLANG uses this to the full capacity by implementing a higher level (class based) API on top of it. A clear documentation helps you understand what's going on under the hood and how to implement each feature.
+SDL3 is an excellent low level library to access all aspects of your system. Motra uses this to the full capacity by implementing a higher level (class based) API on top of it. A clear documentation helps you understand what's going on under the hood and how to implement each feature.
 
 ## RenderQueue
-PLANG handles the rendering for you, you just need to define where and when you want your shape to be drawn. The RenderQueue optimizes the rendering process to the best of it's ability.
+Motra handles the rendering for you, you just need to define where and when you want your shape to be drawn. The RenderQueue optimizes the rendering process to the best of it's ability.
 
 ## Widgets
-PLANG comes packed with widgets. Widgets are separated in 2 categories: basic widgets and extended widgets.
+Motra comes packed with widgets. Widgets are separated in 2 categories: basic widgets and extended widgets.
 ### Basic widgets
 - Button
     - creates a simple buttons
@@ -29,18 +29,18 @@ PLANG comes packed with widgets. Widgets are separated in 2 categories: basic wi
     - a radio button that can be connected with other radio buttons
 
 ## Z-index
-PLANG gives you the ability to set a z-index for each shape or widget. This allows shapes/widgets to be always on top. Using it to the full extend can also improve the speed of the rendering process (
+motra gives you the ability to set a z-index for each shape or widget. This allows shapes/widgets to be always on top. Using it to the full extend can also improve the speed of the rendering process (
 [learn more](#using-z-index) )
 
 ----------
 
 # Structure
-The structure of PLANG is as follows:<br>
+The structure of motra is as follows:<br>
 1. initialize windows
 2. initialize shapes and widgets
 3. main loop (while True loop)
 This structure gives full control over each frame of the app/game.
-Defining where to draw, when to change a shape/widget and handling inputs and interactions with shapes/widgets is up to you. PLANG will handle the events, rendering and optimization while you focus on the logic of your app/game.
+Defining where to draw, when to change a shape/widget and handling inputs and interactions with shapes/widgets is up to you. motra will handle the events, rendering and optimization while you focus on the logic of your app/game.
 
 
 ----------
@@ -76,7 +76,7 @@ For each texture that is used in a chronological order, a new call has to be mad
 ## Showing a rectangle on the screen
 
 ```python
-import plang as pl
+import motra as pl
 
 window = pl.Window(800, 600)
 
